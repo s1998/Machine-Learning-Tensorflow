@@ -2,7 +2,6 @@ import numpy as np
 import tensorflow as tf
 import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
-import matplotlib
 
 x_data = np.random.rand(100).astype(np.float32)
 y_data = x_data * 3 + 2
@@ -11,7 +10,7 @@ y_data = x_data * 3 + 2
 # lambda y: y*2
 # function-: input is y and output is 2*y
 # so  " lambda y: y + np.random.normal(loc=0.0, scale=0.1) " creates a temporary function (func-1) and return it
-# vectorize will convert a scalar function to a vector function
+# 'vectorize' will convert a scalar function to a vector function
 # so  " np.vectorize(lambda y: y + np.random.normal(loc=0.0, scale=0.1)) " creates another temporary function(func-2)
 # and works same as func-1 except that it takes vector input
 # np.vectorize(lambda y: y + np.random.normal(loc=0.0, scale=0.1))(y_data) is passed y_data as input
