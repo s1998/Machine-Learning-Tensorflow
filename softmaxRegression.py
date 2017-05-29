@@ -15,7 +15,6 @@ print("Here")
 y = tf.nn.softmax(tf.matmul(x, W) + b)
 
 cross_entropy = -tf.reduce_sum(y_*tf.log(y))
-
 train_step = tf.train.GradientDescentOptimizer(0.01).minimize(cross_entropy)
 '''
 tf.train.GradientDescentOptimizer

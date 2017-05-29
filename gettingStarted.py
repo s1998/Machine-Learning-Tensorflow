@@ -12,3 +12,9 @@ with tf.Session() as sess:
     result = sess.run(c)
     print(result)
 
+# To use tensorboard for graph visualization :
+# with tf.Session() as sess:
+#     result = sess.run(c)
+#     writer = tf.summary.FileWriter('./graphs',sess.graph)
+#     print(result)
+# writer.close()

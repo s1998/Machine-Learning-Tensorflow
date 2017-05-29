@@ -1,6 +1,6 @@
 import tensorflow as tf
 
-#simple counter creation program using tenserflow
+# simple counter creation program using tenserflow
 counter = tf.Variable(0)
 
 one = tf.constant(1)
@@ -10,19 +10,21 @@ init_op = tf.global_variables_initializer()
 
 with tf.Session() as sess:
     sess.run(init_op)
-    print(sess.run(counter))
+    print("Printing initial value here : ", sess.run(counter))
     for i in range(9):
         sess.run(updatedCounter)
-        print(sess.run(counter))
+        print("Printing updated value here : ",sess.run(counter))
 
-#using placeholders
+# using placeholders
 a = tf.placeholder(tf.float32)
 b=a*2
 
 with tf.Session() as sess:
-    # print(sess.run(b))
-    # Error : InvalidArgumentError (see above for traceback): You must feed a value for placeholder tensor 'Placeholder' with dtype float
-	# [[Node: Placeholder = Placeholder[dtype=DT_FLOAT, shape=[], _device="/job:localhost/replica:0/task:0/cpu:0"]()]]
+    # print(sess.run(b)) This line will give error
+    # Error : InvalidArgumentError (see above for traceback): You must feed a value for placeholder tensor '
+    # Placeholder' with dtype float
+	# [[Node: Placeholder = Placeholder[dtype=DT_FLOAT, shape=[],
+    # _device="/job:localhost/replica:0/task:0/cpu:0"]()]]
 
     dict = {a : [[1,2,4,5], [7,2,3,4]]}
     print(sess.run(b, feed_dict = {a: 3.5}))
