@@ -163,22 +163,5 @@ incorrect = sess.run(error,{data: test_input, target: test_output})
 print (sess.run(prediction,{data: [[[1],[0],[0],[1],[1],[0],[1],[1],[1],[0],[1],[0],[0],[1],[1],[0],[1],[1],[1],[0]]]}))
 print('Epoch {:2d} error {:3.1f}%'.format(i + 1, 100 * incorrect))
 sess.close()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# tf.nn.rnn_cell.MultiRNNCell
+# tf.nn.seq2seq.sequence_loss_by_example()
