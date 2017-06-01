@@ -2,11 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ff52eba1-249e-4d0f-b33e-d854a6e339e1" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/basic_of_tensorflow/README.md" afterPath="" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/basic_of_tensorflow/brnnForMNIST.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/basic_of_tensorflow/importantFunctions.py" afterPath="$PROJECT_DIR$/basic_of_tensorflow/importantFunctions.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/basic_of_tensorflow/rnnForMNIST.py" afterPath="$PROJECT_DIR$/basic_of_tensorflow/rnnForMNIST.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/basic_of_tensorflow/rough.py" afterPath="$PROJECT_DIR$/basic_of_tensorflow/rough.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -34,6 +31,7 @@
     <SUITE FILE_PATH="coverage/tenserFlowProj$tesnorsVariablesPh.coverage" NAME="tesnorsVariablesPh Coverage Results" MODIFIED="1494475745240" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/tensorFlowProj$rnnOnMNIST.coverage" NAME="rnnOnMNIST Coverage Results" MODIFIED="1496297086485" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/basic_of_tensorflow" />
     <SUITE FILE_PATH="coverage/tensorFlowProj$linearReression.coverage" NAME="linearReression Coverage Results" MODIFIED="1495778106765" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/tensorFlowProj$brnnForMNIST.coverage" NAME="brnnForMNIST Coverage Results" MODIFIED="1496312213671" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/basic_of_tensorflow" />
     <SUITE FILE_PATH="coverage/tensorFlowProj$softmaxRegression.coverage" NAME="softmaxRegression Coverage Results" MODIFIED="1495789639670" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/tensorFlowProj$mlpForMNIST.coverage" NAME="mlpForMNIST Coverage Results" MODIFIED="1496043224870" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
@@ -73,11 +71,23 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="rnnForMNIST.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="rnnForMNIST.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/basic_of_tensorflow/rnnForMNIST.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="345">
-              <caret line="74" column="22" lean-forward="false" selection-start-line="74" selection-start-column="8" selection-end-line="74" selection-end-column="22" />
+            <state relative-caret-position="-705">
+              <caret line="60" column="51" lean-forward="false" selection-start-line="60" selection-start-column="23" selection-end-line="60" selection-end-column="51" />
+              <folding>
+                <element signature="e#0#23#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="brnnForMNIST.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/basic_of_tensorflow/brnnForMNIST.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1800">
+              <caret line="120" column="0" lean-forward="true" selection-start-line="120" selection-start-column="0" selection-end-line="120" selection-end-column="0" />
               <folding>
                 <element signature="e#0#23#0" expanded="true" />
               </folding>
@@ -118,6 +128,7 @@
         <option value="$PROJECT_DIR$/basic_of_tensorflow/importantFunctions.py" />
         <option value="$PROJECT_DIR$/basic_of_tensorflow/rnnOnMNIST.py" />
         <option value="$PROJECT_DIR$/basic_of_tensorflow/rnnForMNIST.py" />
+        <option value="$PROJECT_DIR$/basic_of_tensorflow/brnnForMNIST.py" />
       </list>
     </option>
   </component>
@@ -191,25 +202,7 @@
       <recent name="$PROJECT_DIR$/MNIST_data" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.rnnForMNIST">
-    <configuration default="false" name="mlpForMNIST" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="tenserFlowProj" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/mlpForMNIST.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <method />
-    </configuration>
+  <component name="RunManager" selected="Python.brnnForMNIST">
     <configuration default="false" name="cnnForMNIST" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -278,6 +271,24 @@
       <module name="tenserFlowProj" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/basic_of_tensorflow/rnnForMNIST.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <method />
+    </configuration>
+    <configuration default="false" name="brnnForMNIST" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/basic_of_tensorflow" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="tenserFlowProj" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/basic_of_tensorflow/brnnForMNIST.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <method />
@@ -497,19 +508,19 @@
       <method />
     </configuration>
     <list size="5">
-      <item index="0" class="java.lang.String" itemvalue="Python.mlpForMNIST" />
-      <item index="1" class="java.lang.String" itemvalue="Python.cnnForMNIST" />
-      <item index="2" class="java.lang.String" itemvalue="Python.rnnOnMNIST" />
-      <item index="3" class="java.lang.String" itemvalue="Python.importantFunctions" />
-      <item index="4" class="java.lang.String" itemvalue="Python.rnnForMNIST" />
+      <item index="0" class="java.lang.String" itemvalue="Python.cnnForMNIST" />
+      <item index="1" class="java.lang.String" itemvalue="Python.rnnOnMNIST" />
+      <item index="2" class="java.lang.String" itemvalue="Python.importantFunctions" />
+      <item index="3" class="java.lang.String" itemvalue="Python.rnnForMNIST" />
+      <item index="4" class="java.lang.String" itemvalue="Python.brnnForMNIST" />
     </list>
     <recent_temporary>
       <list size="5">
-        <item index="0" class="java.lang.String" itemvalue="Python.rnnForMNIST" />
-        <item index="1" class="java.lang.String" itemvalue="Python.rnnOnMNIST" />
-        <item index="2" class="java.lang.String" itemvalue="Python.importantFunctions" />
-        <item index="3" class="java.lang.String" itemvalue="Python.cnnForMNIST" />
-        <item index="4" class="java.lang.String" itemvalue="Python.mlpForMNIST" />
+        <item index="0" class="java.lang.String" itemvalue="Python.brnnForMNIST" />
+        <item index="1" class="java.lang.String" itemvalue="Python.rnnForMNIST" />
+        <item index="2" class="java.lang.String" itemvalue="Python.rnnOnMNIST" />
+        <item index="3" class="java.lang.String" itemvalue="Python.importantFunctions" />
+        <item index="4" class="java.lang.String" itemvalue="Python.cnnForMNIST" />
       </list>
     </recent_temporary>
   </component>
@@ -563,7 +574,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/logistic_regression.py" />
     <entry file="file://$PROJECT_DIR$/softmaxRegression.py" />
     <entry file="file://$PROJECT_DIR$/cnn.py" />
     <entry file="file://$PROJECT_DIR$/rough.py" />
@@ -638,8 +648,18 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/basic_of_tensorflow/rnnForMNIST.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="345">
-          <caret line="74" column="22" lean-forward="false" selection-start-line="74" selection-start-column="8" selection-end-line="74" selection-end-column="22" />
+        <state relative-caret-position="-705">
+          <caret line="60" column="51" lean-forward="false" selection-start-line="60" selection-start-column="23" selection-end-line="60" selection-end-column="51" />
+          <folding>
+            <element signature="e#0#23#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/basic_of_tensorflow/brnnForMNIST.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1800">
+          <caret line="120" column="0" lean-forward="true" selection-start-line="120" selection-start-column="0" selection-end-line="120" selection-end-column="0" />
           <folding>
             <element signature="e#0#23#0" expanded="true" />
           </folding>
