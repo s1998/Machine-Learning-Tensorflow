@@ -165,3 +165,5 @@ print('Epoch {:2d} error {:3.1f}%'.format(i + 1, 100 * incorrect))
 sess.close()
 # tf.nn.rnn_cell.MultiRNNCell
 # tf.nn.seq2seq.sequence_loss_by_example()
+
+

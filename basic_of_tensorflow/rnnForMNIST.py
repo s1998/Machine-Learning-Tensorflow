@@ -1,0 +1,139 @@
+import tensorflow as tf
+from tensorflow.examples.tutorials.mnist import input_data
+from tensorflow.contrib import rnn
+
+# reference implementation
+# https://github.com/aymericdamien/TensorFlow-Examples/blob/master/examples/3_NeuralNetworks/recurrent_network.py
+
+mnist = input_data.read_data_sets("/tmp/data/", one_hot=True)
+print("Loaded the data.")
+
+# We are going to follow these steps for model creation every time :
+#
+#     1. Data and all parameters given while class construction.
+#        Model and data computation graph is also made then itself.
+#        All the nodes in the dc-graph including predicted value, loss, accuracy
+#        and optimizer will be designed here itself.
+#
+#     2. Then there is a function that help in prediction
+#
+#     3. A function that trains and optimizes which will be called
+#        number of times we want to iterate (i.e. no of epochs).
+#
+#     4. A function that gets the cross-validation score.
+#
+
+
+learning_rate = 0.001
+n_epochs = 20000
+batch_size = 100
+display_step = 1
+
+input_each_time_step = 28
+time_steps = 28
+classes = 10
+hidden_units = 10
+
+class rnnForMNIST:
+    def __init__(self, hidden_units, time_steps, num_classes, learning_rate):
+        # getting the data, declaring the variables
+        self.learning_rate = learning_rate
+        self.x_input = tf.placeholder("float", [None, 28, 28])
+        self.y_input = tf.placeholder("float", [None, 10])
+        self.weights = tf.Variable(tf.random_uniform(shape=[hidden_units, num_classes], maxval=1))
+        self.biases  = tf.Variable(tf.random_uniform(shape=[num_classes]))
+        self.x_input_unstacked = tf.unstack(self.x_input, 28, 1)
+
+        # writing the prediction algorithm
+        self.rnn_cell = rnn.LSTMCell(hidden_units, forget_bias=1.0)
+        self.outputs, self.states = rnn.static_rnn(self.rnn_cell, self.x_input_unstacked, dtype=tf.float32)
+        self.y_predicted = tf.matmul(self.outputs[-1], self.weights) + self.biases
+
+        # defining the loss function
+        self.loss = tf.nn.softmax_cross_entropy_with_logits(logits=self.y_predicted, labels=self.y_input)
+
+        # define optimizer and trainer
+        self.optimizer = tf.train.GradientDescentOptimizer(self.learning_rate)
+        self.trainer = self.optimizer.minimize(self.loss)
+
+        # creating session and initializing variables
+        self.sess = tf.Session()
+        self.init = tf.global_variables_initializer()
+        self.sess.run(self.init)
+
+        # get accuracy
+        self.get_equal = tf.equal(tf.argmax(self.y_input, 1), tf.argmax(self.y_predicted, 1))
+        self.accuracy = tf.reduce_mean(tf.cast(self.get_equal, tf.float32))
+
+    def predict(self, x, y):
+        result = self.sess.run(self.y_predicted, feed_dict={self.x_input: x, self.y_input: y})
+        return result
+
+    def optimize(self, x, y):
+        result = self.sess.run(self.trainer, feed_dict={self.x_input: x, self.y_input: y})
+
+    def cross_validate(self, x, y):
+        result = self.sess.run(self.accuracy, feed_dict={self.x_input:x, self.y_input:y})
+        return result
+
+model = rnnForMNIST(hidden_units=hidden_units, time_steps=time_steps, learning_rate=learning_rate, num_classes=10)
+for i in range(n_epochs):
+    x, y = mnist.train.next_batch(batch_size)
+    x = x.reshape(batch_size, 28, 28)
+    model.optimize(x=x, y=y)
+    if i % 1000 == 0:
+        x = mnist.test.images
+        y = mnist.test.labels
+        x = x.reshape(-1, 28, 28)
+        print(i, model.cross_validate(x=x, y=y))
+
+"""
+Results :
+
+With learning_rate = 0.01
+Iteration number, cross-validation accuracy :
+0 0.096
+500 0.8133
+1000 0.8713
+1500 0.9202
+2000 0.9319
+2500 0.9356
+3000 0.9454
+3500 0.9238
+4000 0.9357
+4500 0.9423
+5000 0.9477
+5500 0.9478
+6000 0.9486
+6500 0.9512
+7000 0.9501
+7500 0.9544
+8000 0.9574
+8500 0.9546
+9000 0.9487
+9500 0.9535
+
+With learning_rate = 0.001
+Iteration number, cross-validation accuracy :
+0 0.0921
+1000 0.7481
+2000 0.8729
+3000 0.9062
+4000 0.9211
+5000 0.9264
+6000 0.9291
+7000 0.9395
+8000 0.9417
+9000 0.9396
+10000 0.9423
+11000 0.9292
+12000 0.9455
+13000 0.9362
+14000 0.9272
+15000 0.9469
+16000 0.9526
+17000 0.9525
+18000 0.947
+19000 0.9499
+
+"""
