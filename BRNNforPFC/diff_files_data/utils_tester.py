@@ -93,6 +93,47 @@ def test_get_family_from_identifiers():
 	else:
 		print("get_all_identifiers failed the tests")
 
+def dbase_tester():
+	output = open('identifier_to_family_2.txt', 'rb')
+	family =pickle.load(output)	
+	li = []
+	for k in family.keys():
+		li.append(family[k])
+
+	from collections import Counter
+	counter = Counter(li)
+
+	count_200 = 0
+	counter_200 = 0
+	count_100 = 0
+	counter_100 = 0
+	count_050  = 0
+	counter_050  = 0
+	families_200 = []
+	families_100 = []
+	families_050 = []
+
+	for k in counter.keys():
+		if(counter[k] >= 200):
+			count_200 += 1
+			counter_200 += counter[k]
+			families_200.append(k)
+		if(counter[k] >= 100):
+			count_100 += 1
+			counter_100 += counter[k]
+			families_100.append(k)
+		if(counter[k] >= 50):
+			count_050 += 1
+			counter_050 += counter[k]
+			families_050.append(k)
+
+	ans = True
+	ans = ans and (count_200 == 550)
+	ans = ans and (count_100 == 981)
+	ans = ans and (count_050 == 1787)
+
+
+
 test_get_seq_identifier()
 test_get_all_identifiers()
 test_get_family_from_identifiers()

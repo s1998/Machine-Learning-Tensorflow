@@ -19,6 +19,9 @@ def get_all_identifiers():
 def get_family_from_identifiers():
 	
 	# Web-scraping based approach 
+	# would have needed 13 GB of data
+	# Some of the pages showed multiple fmilies
+	# dropped this approach
 	# items = get_all_identifiers()
 	# items = ["Q197F7", "B2JFE1"]
 	# family = {}
@@ -73,30 +76,40 @@ def get_family_from_identifiers():
 		family_tree[k] = temp
 
 	identifier_to_family_dbase = {}
+	
 	for k in family_tree.keys():
 		for identifier in family_tree[k]:
 			identifier_to_family_dbase[identifier] = k
 
-	items = get_all_identifiers()
+	all_identifiers = get_all_identifiers()
 	counter = 0
 	i = 0
 
 	identifier_to_family = {}
-	for k in identifier_to_family_dbase.keys():
-		i += 1
-		if(i % 1000 == 0):
-			print("Done for  : ", i)
-			print("Found for : ", counter)
-		if(k in items):
-			identifier_to_family[k] = identifier_to_family_dbase[k]
-			counter += 1
 	
-	output = open('identifier_to_family.txt', 'ab+')
-	pickle.dump(identifier_to_family, output)
-	output.close()
+	# for k in identifier_to_family_dbase.keys():
+	# 	i += 1
+	# 	if(i % 1000 == 0):
+	# 		print("Done for  : ", i)
+	# 		print("Found for : ", counter)
+	# 	if(k in items):
+	# 		identifier_to_family[k] = identifier_to_family_dbase[k]
+	# 		counter += 1
+	
+	common_keys = (set(all_identifiers).intersection(list(identifier_to_family_dbase.keys())))
+	
+	print("Length of common keys : ", len(common_keys))
+	
+	debug = get_seq_identifier()
+	for k in common_keys:
+		identifier_to_family[k] = identifier_to_family_dbase[k]
+	
+	for k in common_keys:
+		print(k, debug[k])
+	# output = open('identifier_to_family_2.txt', 'ab')
+	# pickle.dump(identifier_to_family, output)
+	# output.close()
 		
-	print(counter)
-
 
 get_family_from_identifiers()
 
