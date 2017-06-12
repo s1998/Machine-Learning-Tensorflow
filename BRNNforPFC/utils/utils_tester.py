@@ -52,7 +52,7 @@ def map_creator_tester():
 	ans = True
 	ans = ans and (families_map['Class-II aminoacyl-tRNA synthetase family'] == 1)
 	ans = ans and (families_map['RRF family'] == 87)
-	ans = ans and (families_map['TGF-beta family'] == 510)
+	ans = ans and (families_map['TGF-beta family'] == 510 )
 
 	if ans:
 		print("Passed the mapping tests. ")
