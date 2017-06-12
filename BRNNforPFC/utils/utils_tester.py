@@ -33,6 +33,32 @@ def familywise_db_tester():
 	else:
 		print("Failed the db size tests. ")
 
+def map_creator_tester():
+	file_path = './../data/amino_acid_map_pickle'
+	input_p = open(file_path, 'rb')
+	amino_acid_map = pickle.load(input_p)
+	input_p.close()
+
+	ans = True
+	ans = ans and (amino_acid_map['Y'] == 20)
+	ans = ans and (amino_acid_map['M'] == 11)
+	ans = ans and (amino_acid_map['S'] == 16)
+
+	file_path = './../data/families_map_pickle'
+	input_p = open(file_path, 'rb')
+	families_map = pickle.load(input_p)
+	input_p.close()
+
+	ans = True
+	ans = ans and (families_map['Class-II aminoacyl-tRNA synthetase family'] == 1)
+	ans = ans and (families_map['RRF family'] == 87)
+	ans = ans and (families_map['TGF-beta family'] == 510)
+
+	if ans:
+		print("Passed the mapping tests. ")
+	else:
+		print("Failed the mapping tests. ")
+
 
 familywise_db_tester()
-
+map_creator_tester()

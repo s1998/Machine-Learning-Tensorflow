@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 from collections import Counter
 import matplotlib.pyplot as plt
-# %matplotlib inline
+import pickle
 
 data = pd.read_table('./../data/uniprot-all.tab', sep = '\t')
 data = data.dropna(axis = 0, how = 'any')
@@ -14,7 +14,7 @@ data = data.dropna(axis = 0, how = 'any')
 # fig.savefig('./../data/family_freq')
 
 data_np = data.as_matrix()
-print(data_np.shape)
+print("Data loaded and NaN values dropped, shape : ", data_np.shape)
 
 def save_familywise_db(min_no_of_seq = 200):
 	families = []
@@ -32,22 +32,85 @@ def save_familywise_db(min_no_of_seq = 200):
 	# this would help to divide data 
 	# into three parts with stratification
 
-	db_200 = {}
+	db_ = {}
 	for fam in families_included:
-		db_200[fam] = []
+		db_[fam] = []
 
 	for i in range(data_np.shape[0]):
 		if(data_np[i, 3] in families_included):
 			temp = [data_np[i, 0], data_np[i, 1], data_np[i, 3]]
-			db_200[data_np[i, 3]].append(temp)
+			db_[data_np[i, 3]].append(temp)
 
-	if(not os.path.isfile('./../data/db_200.pickle')):
-		
+	file_path = './../data/db_' + str(min_no_of_seq) +'_pickle'
+	if(not os.path.isfile(file_path)):
+		output = open(file_path, 'ab')
+		pickle.dump(db_, output)
+		output.close()
 
 	print(no_of_families)
 
-save_familywise_db()
-save_familywise_db(100)
-save_familywise_db(50)
+def map_creator():
+	amino_acid_map = {}
+	amino_acid_map['A'] = 1
+	amino_acid_map['C'] = 2
+	amino_acid_map['D'] = 3
+	amino_acid_map['E'] = 4
+	amino_acid_map['F'] = 5
+	amino_acid_map['G'] = 6
+	amino_acid_map['H'] = 7
+	amino_acid_map['I'] = 8
+	amino_acid_map['K'] = 9
+	amino_acid_map['L'] = 10
+	amino_acid_map['M'] = 11
+	amino_acid_map['N'] = 12
+	amino_acid_map['P'] = 13
+	amino_acid_map['Q'] = 14
+	amino_acid_map['R'] = 15
+	amino_acid_map['S'] = 16
+	amino_acid_map['T'] = 17
+	amino_acid_map['V'] = 18
+	amino_acid_map['X'] = 19
+	amino_acid_map['Y'] = 20
 
+	families = []
+	for i in range(data_np.shape[0]):
+		families.append(data_np[i, 3])
+	families_count = Counter(families)
 
+	families_map = {}
+	counter = 0
+	
+	for k, v in families_count.most_common():
+		print(k, v)
+		counter += 1
+		families_map[k] = counter
+	
+	"""
+	Class-II aminoacyl-tRNA synthetase family 3729
+	3729 1
+	RRF family 764
+	764 87
+	TGF-beta family 213
+	213 510
+	"""
+
+	file_path = './../data/amino_acid_map' +'_pickle'
+	if(not os.path.isfile(file_path)):
+		output = open(file_path, 'ab')
+		pickle.dump(amino_acid_map, output)
+		output.close()
+
+	file_path = './../data/families_map' +'_pickle'
+	if(not os.path.isfile(file_path)):
+		output = open(file_path, 'ab')
+		pickle.dump(families_map, output)
+		output.close()
+
+	
+
+# Ran these once, so files are saved 
+# save_familywise_db()
+# save_familywise_db(100)
+# save_familywise_db(50)
+
+map_creator()
