@@ -192,6 +192,9 @@ map_creator()
 
 
 """
+	To remove sequences with length > 1000, 1% data will be missed.
+	For n = 600
+	
 
 		3 440 0.6818181818181818 IspH family
 		0 685 0.0 Complex I 20 kDa subunit family
