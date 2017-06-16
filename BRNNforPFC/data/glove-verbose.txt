@@ -1,0 +1,310 @@
+sud@sud-HP-Pavilion-Notebook:~/PycharmProjects/Machine-Learning-Tensorflow/BRNNforPFC/data/GloVe$ ./demo.sh 
+mkdir -p build
+gcc src/glove.c -o build/glove -lm -pthread -Ofast -march=native -funroll-loops -Wno-unused-result
+src/glove.c: In function ‘save_params’:
+src/glove.c:224:34: warning: format ‘%ld’ expects argument of type ‘long int’, but argument 3 has type ‘long long int’ [-Wformat=]
+  if (write_header) fprintf(fout, "%ld %d\n", vocab_size, vector_size);
+                                  ^
+gcc src/shuffle.c -o build/shuffle -lm -pthread -Ofast -march=native -funroll-loops -Wno-unused-result
+gcc src/cooccur.c -o build/cooccur -lm -pthread -Ofast -march=native -funroll-loops -Wno-unused-result
+gcc src/vocab_count.c -o build/vocab_count -lm -pthread -Ofast -march=native -funroll-loops -Wno-unused-result
+$ build/vocab_count -min-count 5 -verbose 2 < text8 > vocab.txt
+BUILDING VOCABULARY
+Processed 17005207 tokens.
+Counted 253854 unique words.
+Truncating vocabulary at min count 5.
+Using vocabulary of size 71290.
+
+$ build/cooccur -memory 4.0 -vocab-file vocab.txt -verbose 2 -window-size 15 < text8 > cooccurrence.bin
+COUNTING COOCCURRENCES
+window size: 15
+context: symmetric
+max product: 13752509
+overflow length: 38028356
+Reading vocab from file "vocab.txt"...loaded 71290 words.
+Building lookup table...table contains 94990279 elements.
+Processed 17005206 tokens.
+Writing cooccurrences to disk.........2 files in total.
+Merging cooccurrence files: processed 60666466 lines.
+
+$ build/shuffle -memory 4.0 -verbose 2 < cooccurrence.bin > cooccurrence.shuf.bin
+SHUFFLING COOCCURRENCES
+array size: 255013683
+Shuffling by chunks: processed 60666466 lines.
+Wrote 1 temporary file(s).
+Merging temp files: processed 60666466 lines.
+
+$ build/glove -save-file vectors -threads 8 -input-file cooccurrence.shuf.bin -x-max 10 -iter 15 -vector-size 50 -binary 2 -vocab-file vocab.txt -verbose 2
+TRAINING MODEL
+Read 60666466 lines.
+Initializing parameters...done.
+vector size: 50
+vocab size: 71290
+x_max: 10.000000
+alpha: 0.750000
+06/15/17 - 11:57.14PM, iter: 001, cost: 0.069088
+06/15/17 - 11:57.39PM, iter: 002, cost: 0.051656
+06/15/17 - 11:58.04PM, iter: 003, cost: 0.046124
+06/15/17 - 11:58.29PM, iter: 004, cost: 0.042990
+06/15/17 - 11:58.54PM, iter: 005, cost: 0.041143
+06/15/17 - 11:59.19PM, iter: 006, cost: 0.039920
+06/15/17 - 11:59.44PM, iter: 007, cost: 0.039053
+06/16/17 - 12:00.09AM, iter: 008, cost: 0.038404
+06/16/17 - 12:00.34AM, iter: 009, cost: 0.037880
+06/16/17 - 12:00.59AM, iter: 010, cost: 0.037465
+06/16/17 - 12:01.24AM, iter: 011, cost: 0.037119
+06/16/17 - 12:01.51AM, iter: 012, cost: 0.036821
+06/16/17 - 12:02.16AM, iter: 013, cost: 0.036568
+06/16/17 - 12:02.43AM, iter: 014, cost: 0.036354
+06/16/17 - 12:03.10AM, iter: 015, cost: 0.036174
+$ python eval/python/evaluate.py
+capital-common-countries.txt:
+ACCURACY TOP1: 60.47% (306/506)
+capital-world.txt:
+ACCURACY TOP1: 24.97% (890/3564)
+currency.txt:
+ACCURACY TOP1: 4.53% (27/596)
+city-in-state.txt:
+ACCURACY TOP1: 26.05% (607/2330)
+family.txt:
+ACCURACY TOP1: 43.33% (182/420)
+gram1-adjective-to-adverb.txt:
+ACCURACY TOP1: 4.64% (46/992)
+gram2-opposite.txt:
+ACCURACY TOP1: 3.44% (26/756)
+gram3-comparative.txt:
+ACCURACY TOP1: 28.23% (376/1332)
+gram4-superlative.txt:
+ACCURACY TOP1: 8.97% (89/992)
+gram5-present-participle.txt:
+ACCURACY TOP1: 13.26% (140/1056)
+gram6-nationality-adjective.txt:
+ACCURACY TOP1: 55.49% (844/1521)
+gram7-past-tense.txt:
+ACCURACY TOP1: 13.78% (215/1560)
+gram8-plural.txt:
+ACCURACY TOP1: 27.85% (371/1332)
+gram9-plural-verbs.txt:
+ACCURACY TOP1: 6.78% (59/870)
+Questions seen/total: 91.21% (17827/19544)
+Semantic accuracy: 27.13%  (2012/7416)
+Syntactic accuracy: 20.80%  (2166/10411)
+Total accuracy: 23.44%  (4178/17827)
+sud@sud-HP-Pavilion-Notebook:~/PycharmProjects/Machine-Learning-Tensorflow/BRNNforPFC/data/GloVe$ cd ..
+sud@sud-HP-Pavilion-Notebook:~/PycharmProjects/Machine-Learning-Tensorflow/BRNNforPFC/data$ GloVe/build/vocab_count -min-count 5 -verbose 2 < all_seq.txt > vocab.txt
+BUILDING VOCABULARY
+Processed 181748735 tokens.
+Counted 10045 unique words.
+Truncating vocabulary at min count 5.
+Using vocabulary of size 8898.
+
+sud@sud-HP-Pavilion-Notebook:~/PycharmProjects/Machine-Learning-Tensorflow/BRNNforPFC/data$ GloVe/build/vocab_count -min-count 1 -verbose 2 < all_seq.txt > vocab.txt
+BUILDING VOCABULARY
+Processed 117200000 tokens.^Z
+[1]+  Stopped                 GloVe/build/vocab_count -min-count 1 -verbose 2 < all_seq.txt > vocab.txt
+sud@sud-HP-Pavilion-Notebook:~/PycharmProjects/Machine-Learning-Tensorflow/BRNNforPFC/data$ GloVe/build/vocab_count -min-count 1 -verbose 2 < all_seq.txt > vocab.txt
+sud@sud-HP-Pavilion-Notebook:~/PycharmProjects/Machine-Learning-Tensorflow/BRNNforPFC/data$ GloVe/build/vocab_count -min-count 1 -verbose 2 < all_seq.txt > vocab.txt
+BUILDING VOCABULARY
+Processed 181748735 tokens.
+Counted 10045 unique words.
+Using vocabulary of size 10045.
+
+sud@sud-HP-Pavilion-Notebook:~/PycharmProjects/Machine-Learning-Tensorflow/BRNNforPFC/data$ GloVe/build/
+cooccur      glove        shuffle      vocab_count  
+sud@sud-HP-Pavilion-Notebook:~/PycharmProjects/Machine-Learning-Tensorflow/BRNNforPFC/data$ GloVe/build/cooccur 
+Tool to calculate word-word cooccurrence statistics
+Author: Jeffrey Pennington (jpennin@stanford.edu)
+
+Usage options:
+	-verbose <int>
+		Set verbosity: 0, 1, or 2 (default)
+	-symmetric <int>
+		If <int> = 0, only use left context; if <int> = 1 (default), use left and right
+	-window-size <int>
+		Number of context words to the left (and to the right, if symmetric = 1); default 15
+	-vocab-file <file>
+		File containing vocabulary (truncated unigram counts, produced by 'vocab_count'); default vocab.txt
+	-memory <float>
+		Soft limit for memory consumption, in GB -- based on simple heuristic, so not extremely accurate; default 4.0
+	-max-product <int>
+		Limit the size of dense cooccurrence array by specifying the max product <int> of the frequency counts of the two cooccurring words.
+		This value overrides that which is automatically produced by '-memory'. Typically only needs adjustment for use with very large corpora.
+	-overflow-length <int>
+		Limit to length <int> the sparse overflow array, which buffers cooccurrence data that does not fit in the dense array, before writing to disk. 
+		This value overrides that which is automatically produced by '-memory'. Typically only needs adjustment for use with very large corpora.
+	-overflow-file <file>
+		Filename, excluding extension, for temporary files; default overflow
+
+Example usage:
+./cooccur -verbose 2 -symmetric 0 -window-size 10 -vocab-file vocab.txt -memory 8.0 -overflow-file tempoverflow < corpus.txt > cooccurrences.bin
+
+sud@sud-HP-Pavilion-Notebook:~/PycharmProjects/Machine-Learning-Tensorflow/BRNNforPFC/data$ GloVe/build/cooccur -verbose 2 -window-size 3 -vocab-file vocab.txt -memory 8.0 < all_seq.txt > cooccur_matrix.bin
+COUNTING COOCCURRENCES
+window size: 3
+context: symmetric
+max product: 26461224
+overflow length: 76056712
+Reading vocab from file "vocab.txt"...loaded 10045 words.
+Building lookup table...table contains 61871351 elements.
+Processed 181748735 tokens.
+Writing cooccurrences to disk.......2 files in total.
+Merging cooccurrence files: processed 53480106 lines.
+
+sud@sud-HP-Pavilion-Notebook:~/PycharmProjects/Machine-Learning-Tensorflow/BRNNforPFC/data$ GloVe/build/shuffle -memory 8 - verbose 2 < cooccur_matrix.bin > cooccur_matrix_shuffled.bin
+SHUFFLING COOCCURRENCES
+array size: 510027366
+Shuffling by chunks: processed 53480106 lines.
+Wrote 1 temporary file(s).
+Merging temp files: processed 53480106 lines.
+
+sud@sud-HP-Pavilion-Notebook:~/PycharmProjects/Machine-Learning-Tensorflow/BRNNforPFC/data$ GloVe/build/glove 
+all_seq.txt                  cooccur_matrix.bin           db_100_pickle                db_50_pickle                 family_freq.png              uniprot-all.tab              
+amino_acid_map_pickle        cooccur_matrix_shuffled.bin  db_200_pickle                families_map_pickle          GloVe/                       vocab.txt                    
+sud@sud-HP-Pavilion-Notebook:~/PycharmProjects/Machine-Learning-Tensorflow/BRNNforPFC/data$ GloVe/build/glove --help
+TRAINING MODEL
+Unable to open cooccurrence file cooccurrence.shuf.bin.
+sud@sud-HP-Pavilion-Notebook:~/PycharmProjects/Machine-Learning-Tensorflow/BRNNforPFC/data$ GloVe/build/glove -help
+TRAINING MODEL
+Unable to open cooccurrence file cooccurrence.shuf.bin.
+sud@sud-HP-Pavilion-Notebook:~/PycharmProjects/Machine-Learning-Tensorflow/BRNNforPFC/data$ GloVe/build/glove
+GloVe: Global Vectors for Word Representation, v0.2
+Author: Jeffrey Pennington (jpennin@stanford.edu)
+
+Usage options:
+	-verbose <int>
+		Set verbosity: 0, 1, or 2 (default)
+	-write-header <int>
+		If 1, write vocab_size/vector_size as first line. Do nothing if 0 (default).
+	-vector-size <int>
+		Dimension of word vector representations (excluding bias term); default 50
+	-threads <int>
+		Number of threads; default 8
+	-iter <int>
+		Number of training iterations; default 25
+	-eta <float>
+		Initial learning rate; default 0.05
+	-alpha <float>
+		Parameter in exponent of weighting function; default 0.75
+	-x-max <float>
+		Parameter specifying cutoff in weighting function; default 100.0
+	-binary <int>
+		Save output in binary format (0: text, 1: binary, 2: both); default 0
+	-model <int>
+		Model for word vector output (for text output only); default 2
+		   0: output all data, for both word and context word vectors, including bias terms
+		   1: output word vectors, excluding bias terms
+		   2: output word vectors + context word vectors, excluding bias terms
+	-input-file <file>
+		Binary input file of shuffled cooccurrence data (produced by 'cooccur' and 'shuffle'); default cooccurrence.shuf.bin
+	-vocab-file <file>
+		File containing vocabulary (truncated unigram counts, produced by 'vocab_count'); default vocab.txt
+	-save-file <file>
+		Filename, excluding extension, for word vector output; default vectors
+	-gradsq-file <file>
+		Filename, excluding extension, for squared gradient output; default gradsq
+	-save-gradsq <int>
+		Save accumulated squared gradients; default 0 (off); ignored if gradsq-file is specified
+	-checkpoint-every <int>
+		Checkpoint a  model every <int> iterations; default 0 (off)
+
+Example usage:
+./glove -input-file cooccurrence.shuf.bin -vocab-file vocab.txt -save-file vectors -gradsq-file gradsq -verbose 2 -vector-size 100 -threads 16 -alpha 0.75 -x-max 100.0 -eta 0.05 -binary 2 -model 2
+
+sud@sud-HP-Pavilion-Notebook:~/PycharmProjects/Machine-Learning-Tensorflow/BRNNforPFC/data$ GloVe/build/glove -save-file vectors -threads 8 -input-file cooccur_matrix_shuffled.bin -x-max 20 -iter 25 -vector-size 100 -binary 2 -vocab-file vocab.txt -verbose 2 -checkpoint-every 5
+TRAINING MODEL
+Read 53480106 lines.
+Initializing parameters...done.
+vector size: 100
+vocab size: 10045
+x_max: 20.000000
+alpha: 0.750000
+06/16/17 - 12:32.45AM, iter: 001, cost: 0.125798
+06/16/17 - 12:33.30AM, iter: 002, cost: 0.118716
+06/16/17 - 12:34.16AM, iter: 003, cost: 0.117876
+06/16/17 - 12:35.01AM, iter: 004, cost: 0.117536
+06/16/17 - 12:35.45AM, iter: 005, cost: 0.117069
+    saving itermediate parameters for iter 005...done.
+06/16/17 - 12:36.29AM, iter: 006, cost: 0.116634
+06/16/17 - 12:37.15AM, iter: 007, cost: 0.116232
+06/16/17 - 12:37.59AM, iter: 008, cost: 0.115889
+06/16/17 - 12:38.43AM, iter: 009, cost: 0.115584
+06/16/17 - 12:39.27AM, iter: 010, cost: 0.115294
+    saving itermediate parameters for iter 010...done.
+06/16/17 - 12:40.11AM, iter: 011, cost: 0.115031
+06/16/17 - 12:40.55AM, iter: 012, cost: 0.114788
+06/16/17 - 12:41.40AM, iter: 013, cost: 0.114557
+06/16/17 - 12:42.27AM, iter: 014, cost: 0.114339
+06/16/17 - 12:43.11AM, iter: 015, cost: 0.114141
+    saving itermediate parameters for iter 015...done.
+06/16/17 - 12:43.55AM, iter: 016, cost: 0.113949
+06/16/17 - 12:44.40AM, iter: 017, cost: 0.113765
+^Z
+[2]+  Stopped                 GloVe/build/glove -save-file vectors -threads 8 -input-file cooccur_matrix_shuffled.bin -x-max 20 -iter 25 -vector-size 100 -binary 2 -vocab-file vocab.txt -verbose 2 -checkpoint-every 5
+sud@sud-HP-Pavilion-Notebook:~/PycharmProjects/Machine-Learning-Tensorflow/BRNNforPFC/data$ GloVe/build/glove -save-file vectors -threads 8 -input-file cooccur_matrix_shuffled.bin -x-max 20 -iter 50 -vector-size 100 -binary 2 -vocab-file vocab.txt -verbose 2 -checkpoint-every 5
+TRAINING MODEL
+Read 53480106 lines.
+Initializing parameters...done.
+vector size: 100
+vocab size: 10045
+x_max: 20.000000
+alpha: 0.750000
+06/16/17 - 12:46.01AM, iter: 001, cost: 0.125795
+06/16/17 - 12:46.45AM, iter: 002, cost: 0.118716
+06/16/17 - 12:47.29AM, iter: 003, cost: 0.117874
+06/16/17 - 12:48.13AM, iter: 004, cost: 0.117546
+06/16/17 - 12:48.57AM, iter: 005, cost: 0.117072
+    saving itermediate parameters for iter 005...done.
+06/16/17 - 12:49.41AM, iter: 006, cost: 0.116643
+06/16/17 - 12:50.29AM, iter: 007, cost: 0.116261
+06/16/17 - 12:51.13AM, iter: 008, cost: 0.115911
+06/16/17 - 12:51.57AM, iter: 009, cost: 0.115603
+06/16/17 - 12:52.41AM, iter: 010, cost: 0.115314
+    saving itermediate parameters for iter 010...done.
+06/16/17 - 12:53.25AM, iter: 011, cost: 0.115036
+06/16/17 - 12:54.09AM, iter: 012, cost: 0.114791
+06/16/17 - 12:54.53AM, iter: 013, cost: 0.114569
+06/16/17 - 12:55.39AM, iter: 014, cost: 0.114354
+06/16/17 - 12:56.23AM, iter: 015, cost: 0.114154
+    saving itermediate parameters for iter 015...done.
+06/16/17 - 12:57.07AM, iter: 016, cost: 0.113962
+06/16/17 - 12:57.51AM, iter: 017, cost: 0.113776
+06/16/17 - 12:58.35AM, iter: 018, cost: 0.113607
+06/16/17 - 12:59.19AM, iter: 019, cost: 0.113450
+06/16/17 - 01:00.03AM, iter: 020, cost: 0.113289
+    saving itermediate parameters for iter 020...done.
+06/16/17 - 01:00.51AM, iter: 021, cost: 0.113146
+06/16/17 - 01:01.33AM, iter: 022, cost: 0.113008
+06/16/17 - 01:02.15AM, iter: 023, cost: 0.112874
+06/16/17 - 01:02.57AM, iter: 024, cost: 0.112748
+06/16/17 - 01:03.40AM, iter: 025, cost: 0.112625
+    saving itermediate parameters for iter 025...done.
+06/16/17 - 01:04.22AM, iter: 026, cost: 0.112506
+06/16/17 - 01:05.05AM, iter: 027, cost: 0.112390
+06/16/17 - 01:05.47AM, iter: 028, cost: 0.112278
+06/16/17 - 01:06.29AM, iter: 029, cost: 0.112171
+06/16/17 - 01:07.11AM, iter: 030, cost: 0.112071
+    saving itermediate parameters for iter 030...done.
+06/16/17 - 01:07.54AM, iter: 031, cost: 0.111972
+06/16/17 - 01:08.36AM, iter: 032, cost: 0.111874
+06/16/17 - 01:09.18AM, iter: 033, cost: 0.111778
+06/16/17 - 01:10.01AM, iter: 034, cost: 0.111690
+06/16/17 - 01:10.43AM, iter: 035, cost: 0.111605
+    saving itermediate parameters for iter 035...done.
+06/16/17 - 01:11.26AM, iter: 036, cost: 0.111519
+06/16/17 - 01:12.11AM, iter: 037, cost: 0.111433
+06/16/17 - 01:12.56AM, iter: 038, cost: 0.111354
+06/16/17 - 01:13.40AM, iter: 039, cost: 0.111274
+06/16/17 - 01:14.24AM, iter: 040, cost: 0.111200
+    saving itermediate parameters for iter 040...done.
+06/16/17 - 01:15.08AM, iter: 041, cost: 0.111129
+06/16/17 - 01:15.52AM, iter: 042, cost: 0.111058
+06/16/17 - 01:16.36AM, iter: 043, cost: 0.110986
+06/16/17 - 01:17.19AM, iter: 044, cost: 0.110916
+06/16/17 - 01:18.08AM, iter: 045, cost: 0.110849
+    saving itermediate parameters for iter 045...done.
+06/16/17 - 01:18.51AM, iter: 046, cost: 0.110780
+06/16/17 - 01:19.33AM, iter: 047, cost: 0.110721
+06/16/17 - 01:20.15AM, iter: 048, cost: 0.110661
+06/16/17 - 01:20.57AM, iter: 049, cost: 0.110601
+06/16/17 - 01:21.40AM, iter: 050, cost: 0.110544
+    saving itermediate parameters for iter 050...done.
