@@ -3,8 +3,9 @@ from tensorflow.contrib import rnn
 import pickle
 from random import shuffle
 import numpy as np
+from sklearn.metrics import classification_report as c_metric
 
-learning_rate = 0.01
+learning_rate = 0.9
 n_epochs = 10
 batch_size = 10
 display_step = 1
@@ -115,24 +116,29 @@ class RnnForPfcModelOne:
 													  sequence_length = self.seq_length,
 													  dtype = tf.float32)
 		self.outputs_t = tf.reshape(self.outputs[:, -1, :], [-1, hidden_units])
-		self.y_predicted = tf.matmul(self.outputs_t, self.weights) + self.biases
+		self.y_predicted_o = tf.matmul(self.outputs_t, self.weights) + self.biases
+		self.y_predicted = tf.argmax(self.y_predicted_o, 1)
 		self.loss = tf.reduce_mean(
-					tf.nn.softmax_cross_entropy_with_logits(logits=self.y_predicted, labels=self.y_input_o))
+					tf.nn.softmax_cross_entropy_with_logits(logits=self.y_predicted_o, labels=self.y_input_o))
 
 		# define optimizer and trainer
-		self.optimizer = tf.train.GradientDescentOptimizer(learning_rate)
+		# self.optimizer = tf.train.GradientDescentOptimizer(learning_rate)
+		self.optimizer = tf.train.AdamOptimizer(learning_rate = learning_rate)
 		self.trainer = self.optimizer.minimize(self.loss)
 
 		self.sess = tf.Session()
 		self.init = tf.global_variables_initializer()
 		self.sess.run(self.init)
 
-		self.get_equal = tf.equal(tf.argmax(self.y_input_o, 1), tf.argmax(self.y_predicted, 1))
+		self.get_equal = tf.equal(tf.argmax(self.y_input_o, 1), tf.argmax(self.y_predicted_o, 1))
 		self.accuracy = tf.reduce_mean(tf.cast(self.get_equal, tf.float32))
 		self.summary_writer = tf.summary.FileWriter('./data/graph/', graph = self.sess.graph)
 	
 	def predict(self, x, y, seq_length):
 		result = self.sess.run(self.y_predicted, feed_dict={self.x_input: x, self.y_input: y, self.seq_length:seq_length})
+		print(result)
+		result = np.reshape(result, [-1])
+		print("Converted to : \n", result)
 		return result
 
 	def optimize(self, x, y, seq_length):
@@ -145,15 +151,19 @@ class RnnForPfcModelOne:
 	def close_summary_writer(self):
 		self.summary_writer.close()
 
+	def get_loss(self, x, y, seq_length):
+		result = self.sess.run(self.loss, feed_dict={self.x_input:x, self.y_input:y, self.seq_length:seq_length})
+		return result
+
 data_train, data_test, data_cv = get_data(200)
 # print(len(data_train), (len(data_test)), (len(data_cv)))
 
 model = RnnForPfcModelOne()
 
-for epoch in range(1):
+def train_on_train_data():
 	no_of_batches = len(data_train) // batch_size
 	shuffle(data_train)
-	for batch_no in range(10):
+	for batch_no in range(5):
 		print("Iteration number, batch number : ", epoch, batch_no)
 		x = []
 		y = []
@@ -164,41 +174,142 @@ for epoch in range(1):
 			max_length = max(max_length, len(data[0]))
 			x.append(data[0])
 			y.append(data[1])
+			print(x)
+			print(y)
+			debug = input()
 		x_padded = np.array([ row + [-1]*(max_length-len(row)) for row in x])
 		y = np.array(y)
 		model.optimize(x_padded, y, seq_length)
 		accuracy_known = model.cross_validate(x_padded, y, seq_length)
 		print("Training data accuracy : ", accuracy_known)
-		del accuracy_known
-		del x
-		del y
-		del seq_length
-		del x_padded
-	
-	x = []
-	y = []
-	max_length = 0
-	seq_length = []
-	for data in data_cv:
-		seq_length.append(len(data[0]))
-		max_length = max(max_length, len(data[0]))
-		x.append(data[0])
-		y.append(data[1])
-	x_padded = np.array([ row + [-1]*(max_length-len(row)) for row in x])
-	y = np.array(y)
-	print("CV data accuracy : ", model.cross_validate(x_padded, y, seq_length))
+		print("Training data loss     : ", model.get_loss(x_padded, y, seq_length))
 
-	# x = []
-	# y = []
-	# max_length = 0
-	# seq_length = []
-	# for data in data_test:
-	# 	seq_length.append(len(data[0]))
-	# 	max_length = max(max_length, len(data[0]))
-	# 	x.append(data[0])
-	# 	y.append(data[1])
-	# x_padded = np.array([ row + [-1]*(max_length-len(row)) for row in x])
-	# y = np.array(y)
-	# print("Test data accuracy : ", model.cross_validate(x_padded, y, seq_length))
+def res_on_train_data():
+	no_of_batches = len(data_train) // batch_size
+	shuffle(data_train)
+	correct = 0
+	y_actual = []
+	y_predicted = []
+
+	for batch_no in range(5):
+		x = []
+		y = []
+		max_length = 0
+		seq_length = []
+		for data in data_train[batch_no*batch_size: batch_no*batch_size+batch_size]:
+			seq_length.append(len(data[0]))
+			max_length = max(max_length, len(data[0]))
+			x.append(data[0])
+			y.append(data[1])
+		x_padded = np.array([ row + [-1]*(max_length-len(row)) for row in x])
+		for y_ in y:
+			y_actual.append(y_)
+			print("Appending in y_actual", y_)
+		y = np.array(y)
+		accuracy_known = model.cross_validate(x_padded, y, seq_length)
+		y_predicted_ = model.predict(x_padded, y, seq_length)
+		for y_ in y_predicted_:
+			print("Appending in y_preicted", y_)
+			y_predicted.append(y_)
+		correct += accuracy_known * batch_size
+	accuracy = (correct * 100) / (batch_size * no_of_batches)
+	print("Accuracy on train data : ", accuracy)
+	print (c_metric(y_actual, y_predicted))
+
+
+def res_on_test_data():
+	no_of_batches = len(data_test) // batch_size
+	shuffle(data_test)
+	correct = 0
+	y_actual = []
+	y_predicted = []
+
+	for batch_no in range(5):
+		x = []
+		y = []
+		max_length = 0
+		seq_length = []
+		for data in data_test[batch_no*batch_size: batch_no*batch_size+batch_size]:
+			seq_length.append(len(data[0]))
+			max_length = max(max_length, len(data[0]))
+			x.append(data[0])
+			y.append(data[1])
+		x_padded = np.array([ row + [-1]*(max_length-len(row)) for row in x])
+		for y_ in y:
+			y_actual.append(y_)
+			print("Appending in y_actual", y_)
+		y = np.array(y)
+		accuracy_known = model.cross_validate(x_padded, y, seq_length)
+		y_predicted_ = model.predict(x_padded, y, seq_length)
+		for y_ in y_predicted_:
+			print("Appending in y_preicted", y_)
+			y_predicted.append(y_)
+		correct += accuracy_known * batch_size
+	accuracy = (correct * 100) / (batch_size * no_of_batches)
+	print("Accuracy on train data : ", accuracy)
+	print (c_metric(y_actual, y_predicted))
+
+
+def res_on_cv_data():
+	no_of_batches = len(data_cv) // batch_size
+	shuffle(data_cv)
+	correct = 0
+	y_actual = []
+	y_predicted = []
+
+	for batch_no in range(5):
+		x = []
+		y = []
+		max_length = 0
+		seq_length = []
+		for data in data_cv[batch_no*batch_size: batch_no*batch_size+batch_size]:
+			seq_length.append(len(data[0]))
+			max_length = max(max_length, len(data[0]))
+			x.append(data[0])
+			y.append(data[1])
+		x_padded = np.array([ row + [-1]*(max_length-len(row)) for row in x])
+		for y_ in y:
+			y_actual.append(y_)
+			print("Appending in y_actual", y_)
+		y = np.array(y)
+		accuracy_known = model.cross_validate(x_padded, y, seq_length)
+		y_predicted_ = model.predict(x_padded, y, seq_length)
+		for y_ in y_predicted_:
+			print("Appending in y_preicted", y_)
+			y_predicted.append(y_)
+		correct += accuracy_known * batch_size
+	accuracy = (correct * 100) / (batch_size * no_of_batches)
+	print("Accuracy on train data : ", accuracy)
+	print (c_metric(y_actual, y_predicted))
+
+# x_1 = [0,1,2,1,1,1,2]
+# x_2 = [4,4,2,1,5,6,7]
+# print("x_1", x_1)
+# print("x_2", x_2)
+# print(c_metric(x_1, x_2))
+# x_1 [0, 1, 2, 1, 1, 1, 2]
+# x_2 [4, 4, 2, 1, 5, 6, 7]
+# /usr/local/lib/python3.4/dist-packages/sklearn/metrics/classification.py:1113: UndefinedMetricWarning: Precision and F-score are ill-defined and being set to 0.0 in labels with no predicted samples.
+#   'precision', 'predicted', average, warn_for)
+# /usr/local/lib/python3.4/dist-packages/sklearn/metrics/classification.py:1115: UndefinedMetricWarning: Recall and F-score are ill-defined and being set to 0.0 in labels with no true samples.
+#   'recall', 'true', average, warn_for)
+#              precision    recall  f1-score   support
+
+#           0       0.00      0.00      0.00         1
+#           1       1.00      0.25      0.40         4
+#           2       1.00      0.50      0.67         2
+#           4       0.00      0.00      0.00         0
+#           5       0.00      0.00      0.00         0
+#           6       0.00      0.00      0.00         0
+#           7       0.00      0.00      0.00         0
+
+# avg / total       0.86      0.29      0.42         7
+
+
+for epoch in range(n_epochs):
+	train_on_train_data()
+	res_on_train_data()
+	res_on_test_data()
+	res_on_cv_data()
 
 model.close_summary_writer()

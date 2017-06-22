@@ -83,7 +83,7 @@ def get_data(min_no_of_seq = 200):
 
 	return data_train, data_test, data_cv
 
-class RnnForPfcModelOne:
+class RnnForPfcModelFour:
 	def __init__(self, 
 		num_classes = 549, 
 		hidden_units=100, 
@@ -105,8 +105,10 @@ class RnnForPfcModelOne:
 									on_value = 1.0,
 									off_value = 0.0,
 									axis = -1)
-		self.weights = tf.Variable(tf.random_uniform(shape=[hidden_units, num_classes+1], maxval=1))
-		self.biases = tf.Variable(tf.random_uniform(shape=[num_classes+1]))
+		self.weights_f = tf.Variable(tf.random_uniform(shape=[hidden_units, num_classes+1], maxval=1))
+		self.weights_p = tf.Variable(tf.random_uniform(shape=[hidden_units, num_classes+1], maxval=1))
+		self.biases_f = tf.Variable(tf.random_uniform(shape=[num_classes+1]))
+		self.biases_p = tf.Variable(tf.random_uniform(shape=[num_classes+1]))
 		self.rnn_fcell = rnn.BasicLSTMCell(num_units = hidden_units, 
 										   forget_bias = 1.0,
 										   activation = tf.tanh)
@@ -115,13 +117,15 @@ class RnnForPfcModelOne:
 													  sequence_length = self.seq_length,
 													  dtype = tf.float32)
 		self.outputs_maxpooled = tf.reduce_max(self.outputs, axis = 1)
-		self.outputs_t = tf.reshape(self.outputs_maxpooled, [-1, hidden_units])
-		self.y_predicted = tf.matmul(self.outputs_t, self.weights) + self.biases
+		self.outputs_p = tf.reshape(self.outputs_maxpooled, [-1, hidden_units])
+		self.outputs_t = tf.reshape(self.outputs[:, -1, :], [-1, hidden_units])
+		self.y_predicted = tf.matmul(self.outputs_t, self.weights_f) + self.biases_f /
+						 + tf.matmul(self.outputs_t, self.weights_p) + self.biases_p
 		self.loss = tf.reduce_mean(
 					tf.nn.softmax_cross_entropy_with_logits(logits=self.y_predicted, labels=self.y_input_o))
 
 		# define optimizer and trainer
-		self.optimizer = tf.train.GradientDescentOptimizer(learning_rate)
+		self.optimizer = tf.train.AdamOptimizer(learning_rate=0.01)
 		self.trainer = self.optimizer.minimize(self.loss)
 
 		self.sess = tf.Session()
@@ -143,18 +147,22 @@ class RnnForPfcModelOne:
 		result = self.sess.run(self.accuracy, feed_dict={self.x_input:x, self.y_input:y, self.seq_length:seq_length})
 		return result
 
+	def get_loss(self, x, y, seq_length):
+		result = self.sess.run(self.loss, feed_dict={self.x_input:x, self.y_input:y, self.seq_length:seq_length})
+		return result
+
 	def close_summary_writer(self):
 		self.summary_writer.close()
 
 data_train, data_test, data_cv = get_data(200)
 # print(len(data_train), (len(data_test)), (len(data_cv)))
 
-model = RnnForPfcModelOne()
+model = RnnForPfcModelFour()
 
-for epoch in range(1):
+for epoch in range(n_epochs):
 	no_of_batches = len(data_train) // batch_size
 	shuffle(data_train)
-	for batch_no in range(10):
+	for batch_no in range(no_of_batches):
 		print("Iteration number, batch number : ", epoch, batch_no)
 		x = []
 		y = []
@@ -170,24 +178,25 @@ for epoch in range(1):
 		model.optimize(x_padded, y, seq_length)
 		accuracy_known = model.cross_validate(x_padded, y, seq_length)
 		print("Training data accuracy : ", accuracy_known)
+		print("Training data loss     : ", model.get_loss(x_padded, y, seq_length))
 		del accuracy_known
 		del x
 		del y
 		del seq_length
 		del x_padded
 	
-	x = []
-	y = []
-	max_length = 0
-	seq_length = []
-	for data in data_cv:
-		seq_length.append(len(data[0]))
-		max_length = max(max_length, len(data[0]))
-		x.append(data[0])
-		y.append(data[1])
-	x_padded = np.array([ row + [-1]*(max_length-len(row)) for row in x])
-	y = np.array(y)
-	print("CV data accuracy : ", model.cross_validate(x_padded, y, seq_length))
+	# x = []
+	# y = []
+	# max_length = 0
+	# seq_length = []
+	# for data in data_cv:
+	# 	seq_length.append(len(data[0]))
+	# 	max_length = max(max_length, len(data[0]))
+	# 	x.append(data[0])
+	# 	y.append(data[1])
+	# x_padded = np.array([ row + [-1]*(max_length-len(row)) for row in x])
+	# y = np.array(y)
+	# print("CV data accuracy : ", model.cross_validate(x_padded, y, seq_length))
 
 	# x = []
 	# y = []

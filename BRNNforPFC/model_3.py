@@ -72,7 +72,7 @@ class RnnForPfcModelThree:
 		self.outputs_bw = self.outputs[1]
 		self.outputs_fw_t = tf.reshape(self.outputs_fw[:, -1, :], [-1, hidden_units])
 		self.outputs_bw_t = tf.reshape(self.outputs_bw[:,  0, :], [-1, hidden_units])
-		self.y_predicted = tf.matmul(self.outputs_fw_t, self.weights_fw) + self.biases_fw  + \
+		self.y_predicted = tf.matmul(self.outputs_fw_t, self.weights_fw) + self.biases_fw  + /
 						   tf.matmul(self.outputs_bw_t, self.weights_bw) + self.biases_bw
 		self.loss = tf.reduce_mean(
 					tf.nn.softmax_cross_entropy_with_logits(logits=self.y_predicted, labels=self.y_input_o))
@@ -132,31 +132,31 @@ for epoch in range(n_epochs):
 		print("Training data accuracy : ", model.cross_validate(x_padded, y, seq_length))
 		print("Training data loss     : ", model.get_loss(x_padded, y, seq_length))
 	
-	x = []
-	y = []
-	max_length = 0
-	seq_length = []
-	for data in data_cv:
-		seq_length.append(len(data[0]))
-		max_length = max(max_length, len(data[0]))
-		x.append(data[0])
-		y.append(data[1])
-	x_n = [ row + (zero_100_list)*(max_length-len(row)) for row in x]
-	x_padded = np.array(x_n)
-	y = np.array(y)
-	print("CV data accuracy : ", model.cross_validate(x_padded, y, seq_length))
+	# x = []
+	# y = []
+	# max_length = 0
+	# seq_length = []
+	# for data in data_cv:
+	# 	seq_length.append(len(data[0]))
+	# 	max_length = max(max_length, len(data[0]))
+	# 	x.append(data[0])
+	# 	y.append(data[1])
+	# x_n = [ row + (zero_100_list)*(max_length-len(row)) for row in x]
+	# x_padded = np.array(x_n)
+	# y = np.array(y)
+	# print("CV data accuracy : ", model.cross_validate(x_padded, y, seq_length))
 
-	x = []
-	y = []
-	max_length = 0
-	seq_length = []
-	for data in data_test:
-		seq_length.append(len(data[0]))
-		max_length = max(max_length, len(data[0]))
-		x.append(data[0])
-		y.append(data[1])
-	x_n = [ row + (zero_100_list)*(max_length-len(row)) for row in x]
-	x_padded = np.array(x_n)
-	y = np.array(y)
-	print("Test data accuracy : ", model.cross_validate(x_padded, y, seq_length))
+	# x = []
+	# y = []
+	# max_length = 0
+	# seq_length = []
+	# for data in data_test:
+	# 	seq_length.append(len(data[0]))
+	# 	max_length = max(max_length, len(data[0]))
+	# 	x.append(data[0])
+	# 	y.append(data[1])
+	# x_n = [ row + (zero_100_list)*(max_length-len(row)) for row in x]
+	# x_padded = np.array(x_n)
+	# y = np.array(y)
+	# print("Test data accuracy : ", model.cross_validate(x_padded, y, seq_length))
 
