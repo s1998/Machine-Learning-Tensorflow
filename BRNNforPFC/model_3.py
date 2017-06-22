@@ -4,7 +4,7 @@ import pickle
 from random import shuffle
 import numpy as np
 
-learning_rate = 0.01
+learning_rate = 0.1
 n_epochs = 10
 batch_size = 128
 display_step = 1
@@ -74,10 +74,12 @@ class RnnForPfcModelThree:
 		self.outputs_bw_t = tf.reshape(self.outputs_bw[:,  0, :], [-1, hidden_units])
 		self.y_predicted = tf.matmul(self.outputs_fw_t, self.weights_fw) + self.biases_fw  + \
 						   tf.matmul(self.outputs_bw_t, self.weights_bw) + self.biases_bw
-		self.loss = tf.nn.softmax_cross_entropy_with_logits(logits=self.y_predicted, labels=self.y_input_o)
+		self.loss = tf.reduce_mean(
+					tf.nn.softmax_cross_entropy_with_logits(logits=self.y_predicted, labels=self.y_input_o))
 
 		# define optimizer and trainer
 		self.optimizer = tf.train.GradientDescentOptimizer(learning_rate)
+		# self.optimizer = tf.train.AdamOptimizer()
 		self.trainer = self.optimizer.minimize(self.loss)
 
 		self.sess = tf.Session()
@@ -96,6 +98,10 @@ class RnnForPfcModelThree:
 
 	def cross_validate(self, x, y, seq_length):
 		result = self.sess.run(self.accuracy, feed_dict={self.x_input:x, self.y_input:y, self.seq_length:seq_length})
+		return result
+
+	def get_loss(self, x, y, seq_length):
+		result = self.sess.run(self.loss, feed_dict={self.x_input:x, self.y_input:y, self.seq_length:seq_length})
 		return result
 
 data_train, data_test, data_cv = get_data(200)
@@ -124,6 +130,7 @@ for epoch in range(n_epochs):
 		y = np.array(y)
 		model.optimize(x_padded, y, seq_length)
 		print("Training data accuracy : ", model.cross_validate(x_padded, y, seq_length))
+		print("Training data loss     : ", model.get_loss(x_padded, y, seq_length))
 	
 	x = []
 	y = []

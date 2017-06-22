@@ -64,7 +64,8 @@ class RnnForPfcModelTwo:
 													  dtype = tf.float32)
 		self.outputs_t = tf.reshape(self.outputs[:, -1, :], [-1, hidden_units])
 		self.y_predicted = tf.matmul(self.outputs_t, self.weights) + self.biases
-		self.loss = tf.nn.softmax_cross_entropy_with_logits(logits=self.y_predicted, labels=self.y_input_o)
+		self.loss = tf.reduce_mean(
+					tf.nn.softmax_cross_entropy_with_logits(logits=self.y_predicted, labels=self.y_input_o))
 
 		# define optimizer and trainer
 		self.optimizer = tf.train.GradientDescentOptimizer(learning_rate)

@@ -89,15 +89,15 @@ class RnnForPfcModelOne:
 		hidden_units=100, 
 		learning_rate=0.01):
 
-		self.seq_length = tf.placeholder(tf.int32, [None])
+		self.seq_length = tf.placeholder(tf.uint8, [None])
 	
 		self.x_input = tf.placeholder(tf.uint8, [None, None], name = 'x_ip')
 		# batch_size * no_of_time_steps
 		self.x_input_o = tf.one_hot(indices = self.x_input, 
-									depth = 21,
-									on_value = 1.0,
-									off_value = 0.0,
-									axis = -1)
+			depth = 21,
+			on_value = 1.0,
+			off_value = 0.0,
+			axis = -1)
 		# batch_size * no_of_time_steps * 21
 		self.y_input = tf.placeholder(tf.uint8, [None], name = 'y_ip')
 		self.y_input_o = tf.one_hot(indices = self.y_input, 
@@ -105,27 +105,18 @@ class RnnForPfcModelOne:
 									on_value = 1.0,
 									off_value = 0.0,
 									axis = -1)
-		self.weights_fw = tf.Variable(tf.random_uniform(shape=[hidden_units, num_classes+1], maxval=1))
-		self.weights_bw = tf.Variable(tf.random_uniform(shape=[hidden_units, num_classes+1], maxval=1))
-		self.biases_fw = tf.Variable(tf.random_uniform(shape=[num_classes+1]))
-		self.biases_bw = tf.Variable(tf.random_uniform(shape=[num_classes+1]))
+		self.weights = tf.Variable(tf.random_uniform(shape=[hidden_units, num_classes+1], maxval=1))
+		self.biases = tf.Variable(tf.random_uniform(shape=[num_classes+1]))
 		self.rnn_fcell = rnn.BasicLSTMCell(num_units = hidden_units, 
 										   forget_bias = 1.0,
 										   activation = tf.tanh)
-		self.rnn_bcell = rnn.BasicLSTMCell(num_units = hidden_units, 
-										   forget_bias = 1.0,
-										   activation = tf.tanh)
-		self.outputs, self.states = tf.nn.bidirectional_dynamic_rnn(self.rnn_fcell,
-																	self.rnn_bcell,
-													  				self.x_input_o,
-													  				sequence_length = self.seq_length,
-													  				dtype = tf.float32)
-		self.outputs_fw = self.outputs[0]
-		self.outputs_bw = self.outputs[1]
-		self.outputs_fw_t = tf.reshape(self.outputs_fw[:, -1, :], [-1, hidden_units])
-		self.outputs_bw_t = tf.reshape(self.outputs_bw[:,  0, :], [-1, hidden_units])
-		self.y_predicted = tf.matmul(self.outputs_fw_t, self.weights_fw) + self.biases_fw  + \
-						   tf.matmul(self.outputs_bw_t, self.weights_bw) + self.biases_bw
+		self.outputs, self.states = tf.nn.dynamic_rnn(self.rnn_fcell,
+													  self.x_input_o,
+													  sequence_length = self.seq_length,
+													  dtype = tf.float32)
+		self.outputs_maxpooled = tf.reduce_max(self.outputs, axis = 1)
+		self.outputs_t = tf.reshape(self.outputs_maxpooled, [-1, hidden_units])
+		self.y_predicted = tf.matmul(self.outputs_t, self.weights) + self.biases
 		self.loss = tf.reduce_mean(
 					tf.nn.softmax_cross_entropy_with_logits(logits=self.y_predicted, labels=self.y_input_o))
 
@@ -185,18 +176,18 @@ for epoch in range(1):
 		del seq_length
 		del x_padded
 	
-	# x = []
-	# y = []
-	# max_length = 0
-	# seq_length = []
-	# for data in data_cv:
-	# 	seq_length.append(len(data[0]))
-	# 	max_length = max(max_length, len(data[0]))
-	# 	x.append(data[0])
-	# 	y.append(data[1])
-	# x_padded = np.array([ row + [-1]*(max_length-len(row)) for row in x])
-	# y = np.array(y)
-	# print("CV data accuracy : ", model.cross_validate(x_padded, y, seq_length))
+	x = []
+	y = []
+	max_length = 0
+	seq_length = []
+	for data in data_cv:
+		seq_length.append(len(data[0]))
+		max_length = max(max_length, len(data[0]))
+		x.append(data[0])
+		y.append(data[1])
+	x_padded = np.array([ row + [-1]*(max_length-len(row)) for row in x])
+	y = np.array(y)
+	print("CV data accuracy : ", model.cross_validate(x_padded, y, seq_length))
 
 	# x = []
 	# y = []
