@@ -1,14 +1,12 @@
 # Machine-Learning-Tensorflow
 
 Contains : 
- - Basics : 
   - Linear Regression
   - Softmax Regression
   - CNN on MNIST dataset
   - RNN on MNIST dataset
-
-- RNN models(5) for Protein Family Classification 
-- RNN models() for Protein Secondary Structure Prediction
+  - RNN models(5) for Protein Family Classification 
+  - RNN models() for Protein Secondary Structure Prediction
  
 We are going to follow these steps for model creation in tensorflow every time :
 
