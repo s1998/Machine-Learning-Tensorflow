@@ -116,31 +116,31 @@ for epoch in range(n_epochs):
 		model.optimize(x_padded, y, seq_length)
 		print("Training data accuracy : ", model.cross_validate(x_padded, y, seq_length))
 	
-	x = []
-	y = []
-	max_length = 0
-	seq_length = []
-	for data in data_cv:
-		seq_length.append(len(data[0]))
-		max_length = max(max_length, len(data[0]))
-		x.append(data[0])
-		y.append(data[1])
-	x_n = [ row + (zero_100_list)*(max_length-len(row)) for row in x]
-	x_padded = np.array(x_n)
-	y = np.array(y)
-	print("CV data accuracy : ", model.cross_validate(x_padded, y, seq_length))
+	# x = []
+	# y = []
+	# max_length = 0
+	# seq_length = []
+	# for data in data_cv:
+	# 	seq_length.append(len(data[0]))
+	# 	max_length = max(max_length, len(data[0]))
+	# 	x.append(data[0])
+	# 	y.append(data[1])
+	# x_n = [ row + (zero_100_list)*(max_length-len(row)) for row in x]
+	# x_padded = np.array(x_n)
+	# y = np.array(y)
+	# print("CV data accuracy : ", model.cross_validate(x_padded, y, seq_length))
 
-	x = []
-	y = []
-	max_length = 0
-	seq_length = []
-	for data in data_test:
-		seq_length.append(len(data[0]))
-		max_length = max(max_length, len(data[0]))
-		x.append(data[0])
-		y.append(data[1])
-	x_n = [ row + (zero_100_list)*(max_length-len(row)) for row in x]
-	x_padded = np.array(x_n)
-	y = np.array(y)
-	print("Test data accuracy : ", model.cross_validate(x_padded, y, seq_length))
+	# x = []
+	# y = []
+	# max_length = 0
+	# seq_length = []
+	# for data in data_test:
+	# 	seq_length.append(len(data[0]))
+	# 	max_length = max(max_length, len(data[0]))
+	# 	x.append(data[0])
+	# 	y.append(data[1])
+	# x_n = [ row + (zero_100_list)*(max_length-len(row)) for row in x]
+	# x_padded = np.array(x_n)
+	# y = np.array(y)
+	# print("Test data accuracy : ", model.cross_validate(x_padded, y, seq_length))
 

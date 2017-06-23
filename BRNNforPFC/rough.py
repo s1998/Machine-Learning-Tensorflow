@@ -1,4 +1,5 @@
 import tensorflow as tf
+from model_5 import RnnForPfcModelFive
 
 w = tf.Variable(tf.random_uniform(shape=[2, 3, 4], maxval=1))
 init = tf.global_variables_initializer()
