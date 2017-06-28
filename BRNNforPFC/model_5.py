@@ -169,6 +169,7 @@ def res_on_train_data(model, data_train):
 	accuracy = (correct * 100) / (batch_size * no_of_batches)
 	correct_1 = len([i for i,j in zip(y_actual, y_predicted) if i == j])
 	print("Accuracy on train data : ", accuracy, correct, correct_1)
+	print("Lengths of y_actual and y_predicted : ", len(y_actual), len(y_predicted))
 	print (c_metric(y_actual, y_predicted))
 
 def res_on_test_data(model, data_test):
@@ -203,6 +204,7 @@ def res_on_test_data(model, data_test):
 	accuracy = (correct * 100) / (batch_size * no_of_batches)
 	correct_1 = len([i for i,j in zip(y_actual, y_predicted) if i == j])
 	print("Accuracy on train data : ", accuracy, correct, correct_1)
+	print("Lengths of y_actual and y_predicted : ", len(y_actual), len(y_predicted))
 	print (c_metric(y_actual, y_predicted))
 
 def res_on_cv_data(model, data_cv):
@@ -237,6 +239,7 @@ def res_on_cv_data(model, data_cv):
 	accuracy = (correct * 100) / (batch_size * no_of_batches)
 	correct_1 = len([i for i,j in zip(y_actual, y_predicted) if i==j])
 	print("Accuracy on train data : ", accuracy, correct, correct_1)
+	print("Lengths of y_actual and y_predicted : ", len(y_actual), len(y_predicted))
 	print (c_metric(y_actual, y_predicted))
 
 if __name__=="__main__":
