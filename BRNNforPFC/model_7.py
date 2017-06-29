@@ -23,7 +23,7 @@ def get_data_glove(min_no_of_seq = 200):
 
 	return data_train, data_test, data_cv
 
-class RnnForPfcModelSix:
+class RnnForPfcModelSeven:
 	def __init__(self, 
 		num_classes = 549, 
 		hidden_units=100, 
@@ -65,17 +65,17 @@ class RnnForPfcModelSix:
 		self.loss_unweighted = (
 					tf.nn.softmax_cross_entropy_with_logits(logits=self.y_predicted, labels=self.y_input_o))
 		self.loss_weighted = tf.multiply(self.loss_unweighted, self.freq_inv)
-		self.loss_reduced = tf.reduce_mean(self.loss_weighted)
+		self.loss_reduced = tf.reduce_mean(self.loss_weighted) * 498
 
 		# define optimizer and trainer
-		self.optimizer_1 = tf.train.AdamOptimizer(learning_rate = 0.1)
+		self.optimizer_1 = tf.train.GradientDescentOptimizer(learning_rate = 0.1)
 		self.trainer_1 = self.optimizer_1.minimize(self.loss_reduced)
 
-		self.optimizer_2 = tf.train.AdamOptimizer(learning_rate = 0.01)
+		self.optimizer_2 = tf.train.GradientDescentOptimizer(learning_rate = 0.01)
 		self.trainer_2 = self.optimizer_2.minimize(self.loss_reduced)
 
-		self.optimizer_3 = tf.train.AdamOptimizer(learning_rate = 0.001)
-		self.trainer_3 = self.optimizer_3.minimize(self.loss)
+		self.optimizer_3 = tf.train.GradientDescentOptimizer(learning_rate = 0.001)
+		self.trainer_3 = self.optimizer_3.minimize(self.loss_reduced)
 
 		self.sess = tf.Session()
 		self.init = tf.global_variables_initializer()
@@ -98,7 +98,7 @@ class RnnForPfcModelSix:
 
 	def optimize_3(self, x, y, seq_length, freq):
 		result = self.sess.run(self.trainer_3, feed_dict={self.x_input: x, self.y_input: y, self.seq_length:seq_length, self.freq:freq})
-
+	
 	def cross_validate(self, x, y, seq_length, freq):
 		result = self.sess.run(self.accuracy, feed_dict={self.x_input:x, self.y_input:y, self.seq_length:seq_length, self.freq:freq})
 		return result
@@ -112,28 +112,29 @@ use_optimizer = 1
 def train_on_train_data(epoch, model, data_train, data_test):
 	global use_optimizer
 	no_of_batches = len(data_train.keys())
-	for batch_no in range(70):
-	# for batch_no in range(no_of_batches-1, -1, -1):
+	# for batch_no in range(70):
+	for batch_no in range(no_of_batches-1, -1, -1):
 	# for batch_no in [167, 160, 120, 80, 40, 10]:
 		print("Iteration number, batch number : ", epoch, batch_no)
 		data_batch = data_train[batch_no]
 		batch_size = len(data_batch[1])
 		x = data_batch[0]
 		y = data_batch[1]
-		freq = [140] * batch_size
+		freq = data_batch[2]
 		seq_length = data_batch[3]
 		x = np.array(x)
 		y_n = np.array(y)
 		freq = np.array(freq)
 		if use_optimizer == 1:
-			model.optimize_1(x, y, seq_length, freq)
+			model.optimize_1(x, y_n, seq_length, freq)
 		elif use_optimizer == 2:
-			model.optimize_2(x, y, seq_length, freq)
+			model.optimize_2(x, y_n, seq_length, freq)
 		elif use_optimizer == 3:
-			model.optimize_3(x, y, seq_length, freq)
+			model.optimize_3(x, y_n, seq_length, freq)
 		accuracy = model.cross_validate(x, y, seq_length, freq)
 		y_predicted_ = model.predict(x, y, seq_length, freq)
 		y_predicted = y_predicted_
+		# print (c_metric(y, y_predicted))
 		print("Training data accuracy : ", accuracy)
 		print("Training data loss     : ", model.get_loss(x, y, seq_length, freq))
 		if(use_optimizer == 1 and accuracy > 0.85):
@@ -237,12 +238,7 @@ if __name__=="__main__":
 	hidden_units = 100
 	num_classes = 498
 	data_train, data_test, data_cv = get_data_glove(200)
-	# print("Train", len(data_train.keys()))
-	# print("Train", len(data_test.keys()))
-	# print("Train", len(data_cv.keys()))
-	# print("Loaded the data files into memory")
-	# print(len(data_train), (len(data_test)), (len(data_cv)))
-	model = RnnForPfcModelSix(num_classes = 498, hidden_units=100, learning_rate=0.001)
+	model = RnnForPfcModelSeven(num_classes = 498, hidden_units=100, learning_rate=0.001)
 	for epoch in range(n_epochs):
 		train_on_train_data(epoch, model, data_train, data_test)
 		# res_on_train_data(model, data_train)
