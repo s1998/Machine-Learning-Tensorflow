@@ -314,7 +314,7 @@ def raw_data_to_mini_batches():
 	
 	save_obj(mini_batch_data, './data/batch_wise_data.pkl')
 
-# corpus_creation()
+corpus_creation()
 raw_data_to_mini_batches()
 
 
