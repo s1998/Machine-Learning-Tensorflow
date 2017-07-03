@@ -16,13 +16,11 @@ def get_data_train():
 class BrnnForPsspModelOne:
   def __init__(self,
   	num_classes = 8,
-  	hidden_units = 100,
-  	batch_size = 128):
-    
-    self.input_x = tf.placeholder(tf.float64, [ batch_size, 800, 100])
-    self.input_y = tf.placeholder(tf.int64, [ batch_size, 800])
-    self.input_msks = tf.placeholder(tf.float64, [ batch_size, 800])
-    self.input_seq_len = tf.placeholder(tf.int64, [ batch_size])
+  	hidden_units = 100):
+    self.input_x = tf.placeholder(tf.float64, [ 5, 800, 100])
+    self.input_y = tf.placeholder(tf.int64, [ 5, 800])
+    self.input_msks = tf.placeholder(tf.float64, [ 5, 800])
+    self.input_seq_len = tf.placeholder(tf.int64, [ 5])
     self.input_y_o = tf.one_hot(indices = self.input_y,
       depth = num_classes,
       on_value = 1.0,
@@ -33,16 +31,12 @@ class BrnnForPsspModelOne:
     # define weights and biases here (4 weights + 4 biases)
     self.weight_f_c = tf.Variable(0.01 * tf.random_uniform(shape=[hidden_units, num_classes], maxval=1, dtype=tf.float64), dtype=tf.float64) 
     self.weight_b_c = tf.Variable(0.01 * tf.random_uniform(shape=[hidden_units, num_classes], maxval=1, dtype=tf.float64), dtype=tf.float64) 
-    self.weight_f_p_50 = tf.Variable(0.01 * tf.random_uniform(shape=[hidden_units, num_classes], maxval=1, dtype=tf.float64), dtype=tf.float64) 
-    self.weight_b_p_50 = tf.Variable(0.01 * tf.random_uniform(shape=[hidden_units, num_classes], maxval=1, dtype=tf.float64), dtype=tf.float64) 
-    self.weight_f_p_20 = tf.Variable(0.01 * tf.random_uniform(shape=[hidden_units, num_classes], maxval=1, dtype=tf.float64), dtype=tf.float64) 
-    self.weight_b_p_20 = tf.Variable(0.01 * tf.random_uniform(shape=[hidden_units, num_classes], maxval=1, dtype=tf.float64), dtype=tf.float64) 
-    self.biases_f_c = tf.Variable(0.00 * tf.random_uniform(shape=[num_classes], dtype=tf.float64), dtype=tf.float64)
-    self.biases_b_c = tf.Variable(0.00 * tf.random_uniform(shape=[num_classes], dtype=tf.float64), dtype=tf.float64)
-    self.biases_f_p_50 = tf.Variable(0.00 * tf.random_uniform(shape=[num_classes], dtype=tf.float64), dtype=tf.float64)
-    self.biases_b_p_50 = tf.Variable(0.00 * tf.random_uniform(shape=[num_classes], dtype=tf.float64), dtype=tf.float64)
-	self.biases_f_p_20 = tf.Variable(0.00 * tf.random_uniform(shape=[num_classes], dtype=tf.float64), dtype=tf.float64)
-    self.biases_b_p_20 = tf.Variable(0.00 * tf.random_uniform(shape=[num_classes], dtype=tf.float64), dtype=tf.float64)
+    self.weight_f_p = tf.Variable(0.01 * tf.random_uniform(shape=[hidden_units, num_classes], maxval=1, dtype=tf.float64), dtype=tf.float64) 
+    self.weight_b_p = tf.Variable(0.01 * tf.random_uniform(shape=[hidden_units, num_classes], maxval=1, dtype=tf.float64), dtype=tf.float64) 
+    self.biases_f_c = tf.Variable(0.0000001 * tf.random_uniform(shape=[num_classes], dtype=tf.float64), dtype=tf.float64)
+    self.biases_b_c = tf.Variable(0.0000001 * tf.random_uniform(shape=[num_classes], dtype=tf.float64), dtype=tf.float64)
+    self.biases_f_p = tf.Variable(0.0000001 * tf.random_uniform(shape=[num_classes], dtype=tf.float64), dtype=tf.float64)
+    self.biases_b_p = tf.Variable(0.0000001 * tf.random_uniform(shape=[num_classes], dtype=tf.float64), dtype=tf.float64)
 		
     self.rnn_cell_f = rnn.GRUCell(num_units = hidden_units, 
  		activation = tf.tanh)
@@ -57,57 +51,45 @@ class BrnnForPsspModelOne:
  		swap_memory = False)
     self.outputs_f = self.outputs[0]
     self.outputs_b = self.outputs[1]
-    self.outputs_f_p_50_l = []
-    self.outputs_b_p_50_l = []
-    self.outputs_f_p_20_l = []
-    self.outputs_b_p_20_l = []
+    self.outputs_f_p_l = []
+    self.outputs_b_p_l = []
     for i in range(700):
       # 50 dummies + seq + 50 dummies
       # For forward maxpooling, index i will have maxpool from i-50:i 
       # Loss due to dummies will get maske completely 
-      self.outputs_f_p_50_l.append(tf.reduce_max(self.outputs_f[: , i:i+50, :],
+      self.outputs_f_p_l.append(tf.reduce_max(self.outputs_f[: , i:i+50, :],
         axis = 1))
-      self.outputs_b_p_50_l.append(tf.reduce_max(self.outputs_b[: , i+51:i+101, :],
+      self.outputs_b_p_l.append(tf.reduce_max(self.outputs_b[: , i+51:i+101, :],
       	axis = 1))
-      self.outputs_f_p_20_l.append(tf.reduce_max(self.outputs_f[: , i+30:i+50, :],
-        axis = 1))
-      self.outputs_b_p_20_l.append(tf.reduce_max(self.outputs_b[: , i+51:i+71, :],
-      	axis = 1))
-    self.outputs_f_p_50 = tf.stack(self.outputs_f_p_50_l, axis = 1)
-    self.outputs_b_p_50 = tf.stack(self.outputs_b_p_50_l, axis = 1)
-    self.outputs_f_p_20 = tf.stack(self.outputs_f_p_20_l, axis = 1)
-    self.outputs_b_p_20 = tf.stack(self.outputs_b_p_20_l, axis = 1)
-    self.outputs_f_c = tf.slice(self.outputs_f, [0, 50, 0], [ batch_size, 700, 100])
-    self.outputs_b_c = tf.slice(self.outputs_b, [0, 50, 0], [ batch_size, 700, 100])
+    self.outputs_f_p = tf.stack(self.outputs_f_p_l, axis = 1)
+    self.outputs_b_p = tf.stack(self.outputs_b_p_l, axis = 1)
+    self.outputs_f_c = tf.slice(self.outputs_f, [0, 50, 0], [ 5, 700, 100])
+    self.outputs_b_c = tf.slice(self.outputs_b, [0, 50, 0], [ 5, 700, 100])
 
     self.outputs_f_c_r = tf.reshape(self.outputs_f_c, [-1, 100])
     self.outputs_b_c_r = tf.reshape(self.outputs_b_c, [-1, 100])
-    self.outputs_f_p_50_r = tf.reshape(self.outputs_f_50_p, [-1, 100])
-    self.outputs_b_p_50_r = tf.reshape(self.outputs_b_50_p, [-1, 100])
-    self.outputs_f_p_20_r = tf.reshape(self.outputs_f_20_p, [-1, 100])
-    self.outputs_b_p_20_r = tf.reshape(self.outputs_b_20_p, [-1, 100])
+    self.outputs_f_p_r = tf.reshape(self.outputs_f_p, [-1, 100])
+    self.outputs_b_p_r = tf.reshape(self.outputs_b_p, [-1, 100])
 
     self.y_predicted = ( tf.matmul(self.outputs_f_c_r, self.weight_f_c) + self.biases_f_c
                        + tf.matmul(self.outputs_b_c_r, self.weight_b_c) + self.biases_b_c
-                       + tf.matmul(self.outputs_f_p_50_r, self.weight_f_p_50) + self.biases_f_p_50
-                       + tf.matmul(self.outputs_b_p_50_r, self.weight_b_p_50) + self.biases_b_p_50 
-                       + tf.matmul(self.outputs_f_p_20_r, self.weight_f_p_20) + self.biases_f_p_50
-                       + tf.matmul(self.outputs_b_p_20_r, self.weight_b_p_20) + self.biases_b_p_50)
-    # [ batch_size*700, 8] <- self.y_predicted 
-    self.input_y_o_s = tf.slice(self.input_y_o, [0, 50, 0], [ batch_size, 700, 8])
-    self.input_msks_s = tf.slice(self.input_msks, [0, 50], [ batch_size, 700])
-    # [ batch_size, 700, 8] <- self.input_y_o_s
+                       + tf.matmul(self.outputs_f_p_r, self.weight_f_p) + self.biases_f_p
+                       + tf.matmul(self.outputs_b_p_r, self.weight_b_p) + self.biases_b_p )
+    # [ 5*700, 8] <- self.y_predicted 
+    self.input_y_o_s = tf.slice(self.input_y_o, [0, 50, 0], [ 5, 700, 8])
+    self.input_msks_s = tf.slice(self.input_msks, [0, 50], [ 5, 700])
+    # [ 5, 700, 8] <- self.input_y_o_s
     self.input_y_o_r = tf.reshape(self.input_y_o_s, [-1, 8])
     self.input_msks_r = tf.reshape(self.input_msks_s, [-1, 1])
-    # [ batch_size*700, 8] <- self.input_y_o_r
-    self.loss_unmasked = tf.reshape(tf.nn.softmax_cross_entropy_with_logits(logits=self.y_predicted, labels=self.input_y_o_r), [batch_size*700, 1])
+    # [ 5*700, 8] <- self.input_y_o_r
+    self.loss_unmasked = tf.reshape(tf.nn.softmax_cross_entropy_with_logits(logits=self.y_predicted, labels=self.input_y_o_r), [3500, 1])
     #  dim: The class dimension. Defaulted to -1 
     #  which is the last dimension.
     self.loss_masked = tf.multiply(self.loss_unmasked, self.input_msks_r)
     self.no_of_entries_unmasked = tf.reduce_sum(self.input_msks_r)
     self.loss_reduced = ( tf.reduce_sum(self.loss_masked) / self.no_of_entries_unmasked )
 	
-    self.get_equal_unmasked = tf.reshape(tf.equal(tf.argmax(self.input_y_o_r, 1), tf.argmax(self.y_predicted, 1)), [batch_size*700, 1])
+    self.get_equal_unmasked = tf.reshape(tf.equal(tf.argmax(self.input_y_o_r, 1), tf.argmax(self.y_predicted, 1)), [3500, 1])
     self.get_equal = tf.multiply(tf.cast(self.get_equal_unmasked, tf.float64), self.input_msks_r)
     self.accuracy = ( tf.reduce_sum(tf.cast(self.get_equal, tf.float64)) / self.no_of_entries_unmasked)
 
@@ -182,19 +164,19 @@ if __name__=="__main__":
   model = BrnnForPsspModelOne()
   print("Model creation finished. ")
   model.get_shapes()
-  n_epochs = 10
+  n_epochs = 1000
   for epoch in range(n_epochs):
-    for batch_no in range(40):
+    for batch_no in range(2):
       print("Epoch number and batch_no: ", epoch, batch_no)
       data = data_train[batch_no]
       x_inp = data[0]
       y_inp = data[1]
       m_inp = data[2]
       l_inp = data[3]
-      # x_inp = x_inp[:5]
-      # y_inp = y_inp[:5]
-      # m_inp = m_inp[:5]
-      # l_inp = l_inp[:5]
+      x_inp = x_inp[:5]
+      y_inp = y_inp[:5]
+      m_inp = m_inp[:5]
+      l_inp = l_inp[:5]
       loss_unmasked, loss_masked, loss_reduced, input_msks_r, y_predicted, input_y_o_r = model.get_loss_and_predictions(x_inp, y_inp, l_inp, m_inp)
       print("Loss before optimizing : ", loss_reduced)
       loss, accuracy, no_of_entries_unmasked = model.optimize_mini(x_inp, y_inp, l_inp, m_inp)
@@ -224,7 +206,7 @@ if __name__=="__main__":
 Epoch number and batch_no:  0 0
 Loss, accuracy :  910.271072368 275.0
 Epoch number and batch_no:  0 1
-Loss, accuracy :  batch_size1.51474569 291.0
+Loss, accuracy :  1281.51474569 291.0
 Epoch number and batch_no:  1 0
 Loss, accuracy :  890.325852686 279.0
 Epoch number and batch_no:  1 1

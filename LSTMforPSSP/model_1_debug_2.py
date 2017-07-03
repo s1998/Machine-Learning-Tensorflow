@@ -17,7 +17,7 @@ class BrnnForPsspModelOne:
   def __init__(self,
   	num_classes = 8,
   	hidden_units = 100,
-  	batch_size = 128):
+  	batch_size = 5):
     
     self.input_x = tf.placeholder(tf.float64, [ batch_size, 800, 100])
     self.input_y = tf.placeholder(tf.int64, [ batch_size, 800])
@@ -91,8 +91,8 @@ class BrnnForPsspModelOne:
                        + tf.matmul(self.outputs_b_c_r, self.weight_b_c) + self.biases_b_c
                        + tf.matmul(self.outputs_f_p_50_r, self.weight_f_p_50) + self.biases_f_p_50
                        + tf.matmul(self.outputs_b_p_50_r, self.weight_b_p_50) + self.biases_b_p_50 
-                       + tf.matmul(self.outputs_f_p_20_r, self.weight_f_p_20) + self.biases_f_p_50
-                       + tf.matmul(self.outputs_b_p_20_r, self.weight_b_p_20) + self.biases_b_p_50)
+                       + tf.matmul(self.outputs_f_p_20_r, self.weight_f_p_20) + self.biases_f_p_20
+                       + tf.matmul(self.outputs_b_p_20_r, self.weight_b_p_20) + self.biases_b_p_20)
     # [ batch_size*700, 8] <- self.y_predicted 
     self.input_y_o_s = tf.slice(self.input_y_o, [0, 50, 0], [ batch_size, 700, 8])
     self.input_msks_s = tf.slice(self.input_msks, [0, 50], [ batch_size, 700])
@@ -191,10 +191,10 @@ if __name__=="__main__":
       y_inp = data[1]
       m_inp = data[2]
       l_inp = data[3]
-      # x_inp = x_inp[:5]
-      # y_inp = y_inp[:5]
-      # m_inp = m_inp[:5]
-      # l_inp = l_inp[:5]
+      x_inp = x_inp[:5]
+      y_inp = y_inp[:5]
+      m_inp = m_inp[:5]
+      l_inp = l_inp[:5]
       loss_unmasked, loss_masked, loss_reduced, input_msks_r, y_predicted, input_y_o_r = model.get_loss_and_predictions(x_inp, y_inp, l_inp, m_inp)
       print("Loss before optimizing : ", loss_reduced)
       loss, accuracy, no_of_entries_unmasked = model.optimize_mini(x_inp, y_inp, l_inp, m_inp)

@@ -194,7 +194,7 @@ def raw_data_to_mini_batches():
 	str_wise_sum = np.sum(amino_acids_str_with_no_seq, axis = 0)
 	amino_acids_str_present = np.sum(str_wise_sum[:8])
 	amino_acids_dum_present = np.sum(str_wise_sum[8])
-	amino_acids_str_no = np.argmax(amino_acids_with_no_seq, 1)
+	amino_acids_str_no = np.argmax(amino_acids_str_with_no_seq, 1)
 	print("Str wise sum : ", str_wise_sum)
 	print("Str present, padded data : ", amino_acids_str_present, amino_acids_dum_present, amino_acids_str_present + amino_acids_dum_present)
 	amino_acids_no = np.argmax(train_data_n, 1)
