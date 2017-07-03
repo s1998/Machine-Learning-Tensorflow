@@ -29,42 +29,14 @@ class BrnnForPsspModelOne:
 
     self.hidden_units = tf.constant(hidden_units, dtype = tf.float64)
     # define weights and biases here (4 weights + 4 biases)
-    self.weight_f_c = tf.Variable(
-      tf.random_uniform(shape=[hidden_units, num_classes], 
-        maxval=1, 
-    	dtype=tf.float64), 
-      dtype=tf.float64) 
-    self.weight_b_c = tf.Variable(
-    	tf.random_uniform(shape=[hidden_units, num_classes], 
-    		maxval=1, 
-    		dtype=tf.float64), 
-    	dtype=tf.float64) 
-    self.weight_f_p = tf.Variable(
-    	tf.random_uniform(shape=[hidden_units, num_classes], 
-    		maxval=1, 
-    		dtype=tf.float64), 
-    	dtype=tf.float64) 
-    self.weight_b_p = tf.Variable(
-    	tf.random_uniform(shape=[hidden_units, num_classes], 
-    		maxval=1, 
-    		dtype=tf.float64), 
-    	dtype=tf.float64) 
-    self.biases_f_c = tf.Variable(
-    	tf.random_uniform(shape=[num_classes], 
-    		dtype=tf.float64), 
-    	dtype=tf.float64)
-    self.biases_b_c = tf.Variable(
-    	tf.random_uniform(shape=[num_classes], 
-    	  	dtype=tf.float64), 
-    	dtype=tf.float64)
-    self.biases_f_p = tf.Variable(
-    	tf.random_uniform(shape=[num_classes], 
-    		dtype=tf.float64), 
-    	dtype=tf.float64)
-    self.biases_b_p = tf.Variable(
-    	tf.random_uniform(shape=[num_classes], 
-    		dtype=tf.float64), 
-    	dtype=tf.float64)
+    self.weight_f_c = tf.Variable(tf.random_uniform(shape=[hidden_units, num_classes], maxval=1, dtype=tf.float64), dtype=tf.float64) 
+    self.weight_b_c = tf.Variable(tf.random_uniform(shape=[hidden_units, num_classes], maxval=1, dtype=tf.float64), dtype=tf.float64) 
+    self.weight_f_p = tf.Variable(tf.random_uniform(shape=[hidden_units, num_classes], maxval=1, dtype=tf.float64), dtype=tf.float64) 
+    self.weight_b_p = tf.Variable(tf.random_uniform(shape=[hidden_units, num_classes], maxval=1, dtype=tf.float64), dtype=tf.float64) 
+    self.biases_f_c = tf.Variable(tf.random_uniform(shape=[num_classes], dtype=tf.float64), dtype=tf.float64)
+    self.biases_b_c = tf.Variable(tf.random_uniform(shape=[num_classes], dtype=tf.float64), dtype=tf.float64)
+    self.biases_f_p = tf.Variable(tf.random_uniform(shape=[num_classes], dtype=tf.float64), dtype=tf.float64)
+    self.biases_b_p = tf.Variable(tf.random_uniform(shape=[num_classes], dtype=tf.float64), dtype=tf.float64)
 		
     self.rnn_cell_f = rnn.GRUCell(num_units = hidden_units, 
  		activation = tf.tanh)
@@ -110,10 +82,7 @@ class BrnnForPsspModelOne:
     self.input_y_o_r = tf.reshape(self.input_y_o_s, [-1, 8])
     self.input_msks_r = tf.reshape(self.input_msks_s, [-1, 1])
     # [ 5*700, 8] <- self.input_y_o_r
-    self.loss_unmasked = (
-					tf.nn.softmax_cross_entropy_with_logits(
-						logits=self.y_predicted, 
-						labels=self.input_y_o_r))
+    self.loss_unmasked = tf.reshape(tf.nn.softmax_cross_entropy_with_logits(logits=self.y_predicted, labels=self.input_y_o_r), [3500, 1])
     #  dim: The class dimension. Defaulted to -1 
     #  which is the last dimension.
     self.loss_masked = tf.multiply(self.loss_unmasked, 
@@ -146,7 +115,7 @@ class BrnnForPsspModelOne:
     self.optimizer_3 = tf.train.GradientDescentOptimizer(learning_rate = 0.001)
     self.trainer_3 = self.optimizer_3.minimize(self.loss_reduced)
 
-    self.optimizer_mini = tf.train.GradientDescentOptimizer(learning_rate = 0.000001)
+    self.optimizer_mini = tf.train.GradientDescentOptimizer(learning_rate = 0.0001)
     self.trainer_mini = self.optimizer_mini.minimize(self.loss_reduced)
 
     self.sess = tf.Session()
@@ -156,7 +125,8 @@ class BrnnForPsspModelOne:
   def optimize_mini(self, x, y, seq_len, msks):
     result, loss, accuracy = self.sess.run([self.trainer_mini,
 		self.loss_reduced,
-		self.accuracy],
+		self.accuracy,
+		self.no_of_entries_unmasked],
 		feed_dict={self.input_x:x, 
 		self.input_y:y,
 		self.input_seq_len:seq_len,
@@ -164,23 +134,25 @@ class BrnnForPsspModelOne:
     return loss, accuracy
 
   def get_loss(self, x, y, seq_len, msks):
-    loss_unmasked, loss_masked, loss_reduced = self.sess.run([
+    loss_unmasked, loss_masked, loss_reduced, input_msks_r = self.sess.run([
     	self.loss_unmasked,
     	self.loss_masked,
     	self.loss_reduced,
     	self.input_msks_r],
-    	feed_dict = {self.input_x:x,
-    	self.input_y:y,
-    	self.input_seq_len:seq_len,
-    	self.input_msks:msks})
+    	feed_dict = {self.input_x:x, 
+		self.input_y:y,
+		self.input_seq_len:seq_len,
+		self.input_msks:msks})
+    return loss_unmasked, loss_masked, loss_reduced, input_msks_r
 
-  def get_shapes():
+  def get_shapes(self):
   	print("(self.loss_unmasked.shape)", self.loss_unmasked.shape)
   	print("(self.loss_masked.shape)", self.loss_masked.shape)
   	print("(self.loss_reduced.shape)", self.loss_reduced.shape)
   	print("(self.y_predicted.shape)", self.y_predicted.shape)
   	print("(self.input_y_o_r.shape)", self.input_y_o_r.shape)
   	# print(y.y_predicted.shape)
+  	print("(self.input_msks_r.shape)", self.input_msks_r.shape)
 
 if __name__=="__main__":
   data_train = get_data_train()
@@ -200,12 +172,17 @@ if __name__=="__main__":
       y_inp = y_inp[:5]
       m_inp = m_inp[:5]
       l_inp = l_inp[:5]
-      loss, accuracy = model.optimize_mini(x_inp, y_inp, l_inp, m_inp)
       loss_unmasked, loss_masked, loss_reduced, input_msks_r = model.get_loss(x_inp, y_inp, l_inp, m_inp)
-      for i in range(3500):
-      	print(loss_unmasked[i], loss_masked[i], input_msks_r[i], m_inp[i // 700][i % 700 + 50])
+      loss, accuracy, no_of_entries_unmasked = model.optimize_mini(x_inp, y_inp, l_inp, m_inp)
+      for i in range(5):
+      	no_of_entries_unmasked_inp = 0
+      	for j in range(len(m_inp[i])):
+      	  no_of_entries_unmasked_inp += 1
+      print(dtype(loss_unmasked), dtype(loss_masked), dtype(loss_reduced), dtype(input_msks_r))
+      # for i in range(3500):
+      # 	print(loss_unmasked[i], loss_masked[i], input_msks_r[i], m_inp[i // 700][i % 700 + 50])
       print("Loss, accuracy : ", loss, accuracy)
-
+      print("(no_of_entries_unmasked, no_of_entries_unmasked_inp)", no_of_entries_unmasked, no_of_entries_unmasked_inp)
 """
 Epoch number and batch_no:  0 0
 Loss, accuracy :  910.271072368 275.0
