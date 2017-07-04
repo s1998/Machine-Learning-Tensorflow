@@ -17,7 +17,7 @@ class BrnnForPsspModelOne:
   def __init__(self,
   	num_classes = 8,
   	hidden_units = 100,
-  	batch_size = 128):
+  	batch_size = 5):
     
     self.input_x = tf.placeholder(tf.float64, [ batch_size, 800, 100])
     self.input_y = tf.placeholder(tf.int64, [ batch_size, 800])
@@ -310,10 +310,10 @@ if __name__=="__main__":
       y_inp = data[1]
       m_inp = data[2]
       l_inp = data[3]
-      # x_inp = x_inp[:5]
-      # y_inp = y_inp[:5]
-      # m_inp = m_inp[:5]
-      # l_inp = l_inp[:5]
+      x_inp = x_inp[:5]
+      y_inp = y_inp[:5]
+      m_inp = m_inp[:5]
+      l_inp = l_inp[:5]
       # model.print_weights(x_inp, y_inp, l_inp, m_inp)
       # f_c, b_c, f_p_50, b_p_50, f_p_20, b_p_20 = model.get_rnn_outputs(x_inp, y_inp, l_inp, m_inp)
       # print("f_c : ", f_c)
