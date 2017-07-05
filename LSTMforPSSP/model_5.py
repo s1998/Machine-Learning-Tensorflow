@@ -1,3 +1,4 @@
+# removing all the maxpooling based sliding windows
 import tensorflow as tf
 from tensorflow.contrib import rnn
 import pickle

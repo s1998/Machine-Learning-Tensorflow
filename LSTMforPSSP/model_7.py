@@ -1,3 +1,4 @@
+# removed all maxpooling with sliding windows, using relu layer and using 2 parallel RNNs 
 import tensorflow as tf
 from tensorflow.contrib import rnn
 import pickle
