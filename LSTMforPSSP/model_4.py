@@ -51,6 +51,7 @@ class BrnnForPsspModelOne:
       off_value = 0.0,
       axis = -1)
 
+    # to use xavier initialization, dtype needs to be float32
     self.hidden_units = tf.constant(hidden_units, dtype = tf.float32)
     
     # define weights and biases here (8 weights + 1 biases)
@@ -65,9 +66,9 @@ class BrnnForPsspModelOne:
     self.weight_f_p_30 = tf.Variable(0.01 * tf.random_uniform(shape=[hidden_units, num_classes], maxval=1, dtype=tf.float32), dtype=tf.float32) 
     self.weight_b_p_30 = tf.Variable(0.01 * tf.random_uniform(shape=[hidden_units, num_classes], maxval=1, dtype=tf.float32), dtype=tf.float32) 
     self.weight_total = tf.Variable(0.01 * tf.random_uniform(shape=[hidden_units * 10, num_classes], maxval=1, dtype=tf.float32), dtype=tf.float32) 
-    self.weight_gate_1 = tf.Variable(tf.random_uniform(shape=[hidden_units * 10 + 122, hidden_units*10], maxval=1, dtype=tf.float32) / tf.sqrt(hidden_units * 10 + 122), dtype=tf.float32) 
-    self.weight_gate_2 = tf.Variable(tf.random_uniform(shape=[hidden_units * 10 + 122, 122], maxval=1, dtype=tf.float32) / tf.sqrt(hidden_units * 10 + 122), dtype=tf.float32) 
-    self.weight_h = tf.Variable(0.01 * tf.random_uniform(shape=[hidden_units * 10 + 122, num_classes], maxval=1, dtype=tf.float32) / tf.sqrt(hidden_units * 10 + 122), dtype=tf.float32) 
+    self.weight_gate_1 = tf.Variable(tf.random_uniform(shape=[hidden_units * 10 + 122, hidden_units*10], maxval=1, dtype=tf.float32) / tf.sqrt(self.hidden_units * 10 + 122), dtype=tf.float32) 
+    self.weight_gate_2 = tf.Variable(tf.random_uniform(shape=[hidden_units * 10 + 122, 122], maxval=1, dtype=tf.float32) / tf.sqrt(self.hidden_units * 10 + 122), dtype=tf.float32) 
+    self.weight_h = tf.Variable(0.01 * tf.random_uniform(shape=[hidden_units * 10 + 122, num_classes], maxval=1, dtype=tf.float32) / tf.sqrt(self.hidden_units * 10 + 122), dtype=tf.float32) 
     self.biases = tf.Variable(tf.zeros([num_classes], dtype=tf.float32), dtype=tf.float32)
     self.biases_gate_1 = tf.Variable(tf.zeros([hidden_units * 10], dtype=tf.float32), dtype=tf.float32)
     self.biases_gate_2 = tf.Variable(tf.zeros([122], dtype=tf.float32), dtype=tf.float32)
@@ -263,6 +264,17 @@ class BrnnForPsspModelOne:
     self.input_msks:msks})
     return loss_unmasked, loss_masked, loss_reduced, input_msks_r, y_predicted, input_y_o_r 
 
+  def get_loss_and_accuracy(self, x, y, seq_len, msks):
+    loss, accuracy, no_of_entries_unmasked = self.sess.run([
+    self.loss_reduced,
+    self.accuracy,
+    self.no_of_entries_unmasked],
+    feed_dict={self.input_x:x, 
+    self.input_y:y,
+    self.input_seq_len:seq_len,
+    self.input_msks:msks})
+    return loss, accuracy, no_of_entries_unmasked
+
   def print_biases(self, x, y, seq_len, msks):
     biases = self.sess.run([
       self.biases],
@@ -270,7 +282,7 @@ class BrnnForPsspModelOne:
         self.input_y:y,
         self.input_seq_len:seq_len,
         self.input_msks:msks})
-    print("self.biases : ", np.array_repr(biases).replace('\n', ''))
+    print("self.biases : ", np.array_repr(np.array(biases)).replace('\n', '').replace(' ', ''))
 
   def print_weights(self, x, y, seq_len, msks):
     f_c, b_c, f_p_50, b_p_50, f_p_20, b_p_20 = self.sess.run([self.weight_f_c,
@@ -399,6 +411,10 @@ if __name__=="__main__":
   epoch_wise_loss = []
 
   for epoch in range(n_epochs):
+    acc_train = []
+    acc_test = []
+    loss_train = []
+    loss_test = []
     for batch_no in range(num_batches):
       print("Epoch number and batch_no: ", epoch, batch_no)
       data = data_train[batch_no]
@@ -408,11 +424,13 @@ if __name__=="__main__":
       l_inp = data[3]
       
       loss_unmasked, loss_masked, loss_reduced, input_msks_r, y_predicted, input_y_o_r = model.get_loss_and_predictions(x_inp, y_inp, l_inp, m_inp)
-      print("Loss before optimizing : ", loss_reduced)
+      # print("Loss before optimizing : ", loss_reduced)
       loss, accuracy, no_of_entries_unmasked = model.optimize_mini(x_inp, y_inp, l_inp, m_inp)
-      print("Loss, accuracy and verification results : ", loss, accuracy)
+      print("Loss and accuracy : ", loss, accuracy)
       get_c1_score(y_inp, y_predicted, m_inp)
       model.print_biases(x_inp, y_inp, l_inp, m_inp)
+      acc_train.append(accuracy)
+      loss_train.append(loss)
     for batch_no in range(num_batches_test):
       print("Epoch number and testing batch number : ", epoch, batch_no)
       data = data_test[batch_no]
@@ -420,13 +438,35 @@ if __name__=="__main__":
       y_inp = data[1]
       m_inp = data[2]
       l_inp = data[3]
-      loss_unmasked, loss_masked, loss_reduced, input_msks_r, y_predicted, input_y_o_r = model.get_loss_and_predictions(x_inp, y_inp, l_inp, m_inp)
-      print("Loss before optimizing : ", loss_reduced)
-      print("Loss, accuracy and verification results : ", loss, accuracy, ans)
+      loss, accuracy, no_of_entries_unmasked = model.get_loss_and_accuracy(x_inp, y_inp, l_inp, m_inp)
+      print("Loss and accuracy : ", loss, accuracy)
       get_c1_score(y_inp, y_predicted, m_inp)
-      
-    epoch_wise_accs.append(accuracy)
-    epoch_wise_loss.append(loss)
+      acc_test.append(accuracy)
+      loss_test.append(loss)
+    
+    acc_train_avg = 0
+    loss_train_avg = 0
+    for i in range(len(acc_train)):
+      acc_train_avg += acc_train[i]
+      loss_train_avg += loss_train[i]
+    acc_train_avg = acc_train_avg / len(acc_train)
+    loss_train_avg = loss_train_avg / len(loss_train)
+
+    acc_test_avg = 0
+    loss_test_avg = 0
+    for i in range(len(acc_test)):
+      acc_test_avg += acc_test[i]
+      loss_test_avg += loss_test[i]
+    acc_test_avg = acc_test_avg / len(acc_test)
+    loss_test_avg = loss_test_avg / len(loss_test)
+
+    print("\n\n\n")
+    print("Epoch number and results on train data : ", acc_train_avg, loss_train_avg)
+    print("Epoch number and results on test data  : ", acc_test_avg, loss_test_avg)
+    epoch_wise_accs.append([acc_train_avg, acc_test_avg])
+    epoch_wise_loss.append([loss_train_avg, loss_test_avg])
+    for i in range(len(epoch_wise_accs)):
+      print(epoch_wise_accs[i], "\n")
     #   #   #  #    #   #   #  #    #   #   #  #    #   #   #  #    #   #   #  #    #   #   ##
     print('')
     # Save model weights to disk
@@ -442,8 +482,7 @@ if __name__=="__main__":
     #   #   #  #    #   #   #  #    #   #   #  #    #   #   #  #    #   #   #  #    #   #   ##
 
 
-
-
+    
 
 
 

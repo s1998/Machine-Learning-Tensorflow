@@ -393,6 +393,10 @@ if __name__=="__main__":
   epoch_wise_loss = []
 
   for epoch in range(n_epochs):
+    acc_train = []
+    acc_test = []
+    loss_train = []
+    loss_test = []
     for batch_no in range(num_batches):
       print("Epoch number and batch_no: ", epoch, batch_no)
       data = data_train[batch_no]
@@ -407,6 +411,8 @@ if __name__=="__main__":
       print("Loss, accuracy and verification results : ", loss, accuracy)
       get_c1_score(y_inp, y_predicted, m_inp)
       model.print_biases(x_inp, y_inp, l_inp, m_inp)
+      acc_train.append(accuracy)
+      loss_train.append(loss)
     for batch_no in range(num_batches_test):
       print("Epoch number and testing batch number : ", epoch, batch_no)
       data = data_test[batch_no]
@@ -417,9 +423,31 @@ if __name__=="__main__":
       loss, accuracy, no_of_entries_unmasked = model.get_loss_and_accuracy(x_inp, y_inp, l_inp, m_inp)
       print("Loss, accuracy and verification results : ", loss, accuracy)
       get_c1_score(y_inp, y_predicted, m_inp)
-      
-    epoch_wise_accs.append(accuracy)
-    epoch_wise_loss.append(loss)
+      acc_test.append(accuracy)
+      loss_test.append(loss)
+    
+   acc_train_avg = 0
+    loss_train_avg = 0
+    for i in range(len(acc_train)):
+      acc_train_avg += acc_train[i]
+      loss_train_avg += loss_train[i]
+    acc_train_avg = acc_train_avg / len(acc_train)
+    loss_train_avg = loss_train_avg / len(loss_train)
+
+    acc_test_avg = 0
+    loss_test_avg = 0
+    for i in range(len(acc_test)):
+      acc_test_avg += acc_test[i]
+      loss_test_avg += loss_test[i]
+    acc_test_avg = acc_test_avg / len(acc_test)
+    loss_test_avg = loss_test_avg / len(loss_test)
+
+    print("\n\n\n")
+    print("Epoch number and results on train data : ", acc_train_avg, loss_train_avg)
+    print("Epoch number and results on test data  : ", acc_test_avg, loss_test_avg)
+    epoch_wise_accs.append([acc_train_avg, acc_test_avg])
+    epoch_wise_loss.append([loss_train_avg, loss_test_avg])
+    
     print('')
     # Save model weights to disk
     p=time.time()
