@@ -443,8 +443,8 @@ if __name__=="__main__":
     loss_test_avg = loss_test_avg / len(loss_test)
 
     print("\n\n\n")
-    print("Epoch number and results on train data : ", acc_train_avg, loss_train_avg)
-    print("Epoch number and results on test data  : ", acc_test_avg, loss_test_avg)
+    print("Epoch number and results on train data : ", i, acc_train_avg, loss_train_avg)
+    print("Epoch number and results on test data  : ", i, acc_test_avg, loss_test_avg)
     epoch_wise_accs.append([acc_train_avg, acc_test_avg])
     epoch_wise_loss.append([loss_train_avg, loss_test_avg])
     

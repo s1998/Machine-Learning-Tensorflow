@@ -57,20 +57,13 @@ class BrnnForPsspModelOne:
     # define weights and biases here (8 weights + 1 biases)
     self.weight_f_c = tf.Variable(0.01 * tf.random_uniform(shape=[hidden_units, num_classes], maxval=1, dtype=tf.float32), dtype=tf.float32) 
     self.weight_b_c = tf.Variable(0.01 * tf.random_uniform(shape=[hidden_units, num_classes], maxval=1, dtype=tf.float32), dtype=tf.float32) 
-    self.weight_f_p_50 = tf.Variable(0.01 * tf.random_uniform(shape=[hidden_units, num_classes], maxval=1, dtype=tf.float32), dtype=tf.float32) 
-    self.weight_b_p_50 = tf.Variable(0.01 * tf.random_uniform(shape=[hidden_units, num_classes], maxval=1, dtype=tf.float32), dtype=tf.float32) 
-    self.weight_f_p_20 = tf.Variable(0.01 * tf.random_uniform(shape=[hidden_units, num_classes], maxval=1, dtype=tf.float32), dtype=tf.float32) 
-    self.weight_b_p_20 = tf.Variable(0.01 * tf.random_uniform(shape=[hidden_units, num_classes], maxval=1, dtype=tf.float32), dtype=tf.float32) 
-    self.weight_f_p_10 = tf.Variable(0.01 * tf.random_uniform(shape=[hidden_units, num_classes], maxval=1, dtype=tf.float32), dtype=tf.float32) 
-    self.weight_b_p_10 = tf.Variable(0.01 * tf.random_uniform(shape=[hidden_units, num_classes], maxval=1, dtype=tf.float32), dtype=tf.float32) 
-    self.weight_f_p_30 = tf.Variable(0.01 * tf.random_uniform(shape=[hidden_units, num_classes], maxval=1, dtype=tf.float32), dtype=tf.float32) 
-    self.weight_b_p_30 = tf.Variable(0.01 * tf.random_uniform(shape=[hidden_units, num_classes], maxval=1, dtype=tf.float32), dtype=tf.float32) 
-    self.weight_total = tf.Variable(0.01 * tf.random_uniform(shape=[hidden_units * 10, num_classes], maxval=1, dtype=tf.float32), dtype=tf.float32) 
-    self.weight_gate_1 = tf.Variable(tf.random_uniform(shape=[hidden_units * 10 + 122, hidden_units*10], maxval=1, dtype=tf.float32) / tf.sqrt(self.hidden_units * 10 + 122), dtype=tf.float32) 
-    self.weight_gate_2 = tf.Variable(tf.random_uniform(shape=[hidden_units * 10 + 122, 122], maxval=1, dtype=tf.float32) / tf.sqrt(self.hidden_units * 10 + 122), dtype=tf.float32) 
-    self.weight_h = tf.Variable(0.01 * tf.random_uniform(shape=[hidden_units * 10 + 122, num_classes], maxval=1, dtype=tf.float32) / tf.sqrt(self.hidden_units * 10 + 122), dtype=tf.float32) 
-    self.biases = tf.Variable(tf.zeros([num_classes], dtype=tf.float32), dtype=tf.float32)
-    self.biases_gate_1 = tf.Variable(tf.zeros([hidden_units * 10], dtype=tf.float32), dtype=tf.float32)
+    self.weight_gate_1 = tf.Variable(tf.random_uniform(shape=[hidden_units * 2 + 122, hidden_units * 2], maxval=1, dtype=tf.float32) / tf.sqrt(self.hidden_units * 2 + 122), dtype=tf.float32) 
+    self.weight_gate_2 = tf.Variable(tf.random_uniform(shape=[hidden_units * 2 + 122, 122], maxval=1, dtype=tf.float32) / tf.sqrt(self.hidden_units * 2 + 122), dtype=tf.float32) 
+    self.weight_h = tf.Variable(0.01 * tf.random_uniform(shape=[hidden_units * 2 + 122, hidden_units * 2 + 122], maxval=1, dtype=tf.float32) / tf.sqrt((self.hidden_units * 2 + 122) / 2), dtype=tf.float32) 
+    self.weight_y = tf.Variable(0.01 * tf.random_uniform(shape=[hidden_units * 2 + 122, num_classes], maxval=1, dtype=tf.float32) / tf.sqrt(self.hidden_units * 2 + 122), dtype=tf.float32) 
+    self.biases_h = tf.Variable(tf.zeros([hidden_units * 2 + 122], dtype=tf.float32), dtype=tf.float32)
+    self.biases_y = tf.Variable(tf.zeros([num_classes], dtype=tf.float32), dtype=tf.float32)
+    self.biases_gate_1 = tf.Variable(tf.zeros([hidden_units * 2], dtype=tf.float32), dtype=tf.float32)
     self.biases_gate_2 = tf.Variable(tf.zeros([122], dtype=tf.float32), dtype=tf.float32)
     
     self.rnn_cell_f = rnn.GRUCell(num_units = hidden_units, 
@@ -87,88 +80,13 @@ class BrnnForPsspModelOne:
     self.outputs_f = self.outputs[0]
     self.outputs_b = self.outputs[1]
 
-    # Maxpooling over the outputs ....
-    self.outputs_f_p_50 = tf.reshape(
-                            tf.nn.max_pool(
-                              tf.reshape(self.outputs_f, [batch_size, 800, 100, 1]), 
-                              ksize = [1, 50, 1, 1], 
-                              strides = [1, 1, 1, 1], 
-                              padding = 'VALID'),
-                            [batch_size, 751, 100]
-                            )[:, 0:700, :]
-    self.outputs_b_p_50 = tf.reshape(
-                            tf.nn.max_pool(
-                              tf.reshape(self.outputs_b, [batch_size, 800, 100, 1]), 
-                              ksize = [1, 50, 1, 1], 
-                              strides = [1, 1, 1, 1], 
-                              padding = 'VALID'),
-                            [batch_size, 751, 100]
-                            )[:, 51:751, :]
-    self.outputs_f_p_20 = tf.reshape(
-                            tf.nn.max_pool(
-                              tf.reshape(self.outputs_f[:, 30:750, :], [batch_size, 720, 100, 1]), 
-                              ksize = [1, 20, 1, 1], 
-                              strides = [1, 1, 1, 1], 
-                              padding = 'VALID'),
-                            [batch_size, 701, 100]
-                            )[:, 0:700, :]
-    self.outputs_b_p_20 = tf.reshape(
-                            tf.nn.max_pool(
-                              tf.reshape(self.outputs_b[:, 50:770, :], [batch_size, 720, 100, 1]), 
-                              ksize = [1, 20, 1, 1], 
-                              strides = [1, 1, 1, 1], 
-                              padding = 'VALID'),
-                            [batch_size, 701, 100]
-                            )[:, 1:701, :]
-    self.outputs_f_p_30 = tf.reshape(
-                                tf.nn.max_pool(
-                                  tf.reshape(self.outputs_f[:, 20:750, :], [batch_size, 730, 100, 1]), 
-                                  ksize = [1, 30, 1, 1], 
-                                  strides = [1, 1, 1, 1], 
-                                  padding = 'VALID'),
-                                [batch_size, 701, 100]
-                                )[:, 0:700, :]
-    self.outputs_b_p_30 = tf.reshape(
-                                tf.nn.max_pool(
-                                  tf.reshape(self.outputs_b[:, 50:780, :], [batch_size, 730, 100, 1]), 
-                                  ksize = [1, 30, 1, 1], 
-                                  strides = [1, 1, 1, 1], 
-                                  padding = 'VALID'),
-                                [batch_size, 701, 100]
-                                )[:, 1:701, :]
-    self.outputs_f_p_10 = tf.reshape(
-                                tf.nn.max_pool(
-                                    tf.reshape(self.outputs_f[:, 40:750, :], [batch_size, 710, 100, 1]), 
-                                    ksize = [1, 10, 1, 1], 
-                                    strides = [1, 1, 1, 1], 
-                                    padding = 'VALID'),
-                                [batch_size, 701, 100]
-                                )[:, 0:700, :]
-    self.outputs_b_p_10 = tf.reshape(
-                              tf.nn.max_pool(
-                                tf.reshape(self.outputs_b[:, 50:760, :], [batch_size, 710, 100, 1]), 
-                                  ksize = [1, 10, 1, 1], 
-                                  strides = [1, 1, 1, 1], 
-                                  padding = 'VALID'),
-                                [batch_size, 701, 100]
-                              )[:, 1:701, :]
     self.outputs_f_c = tf.slice(self.outputs_f, [0, 50, 0], [ batch_size, 700, 100])
     self.outputs_b_c = tf.slice(self.outputs_b, [0, 50, 0], [ batch_size, 700, 100])
 
     self.outputs_f_c_r = tf.reshape(self.outputs_f_c, [-1, 100])
     self.outputs_b_c_r = tf.reshape(self.outputs_b_c, [-1, 100])
-    self.outputs_f_p_50_r = tf.reshape(self.outputs_f_p_50, [-1, 100])
-    self.outputs_b_p_50_r = tf.reshape(self.outputs_b_p_50, [-1, 100])
-    self.outputs_f_p_20_r = tf.reshape(self.outputs_f_p_20, [-1, 100])
-    self.outputs_b_p_20_r = tf.reshape(self.outputs_b_p_20, [-1, 100])
-    self.outputs_f_p_30_r = tf.reshape(self.outputs_f_p_30, [-1, 100])
-    self.outputs_b_p_30_r = tf.reshape(self.outputs_b_p_30, [-1, 100])
-    self.outputs_f_p_10_r = tf.reshape(self.outputs_f_p_10, [-1, 100])
-    self.outputs_b_p_10_r = tf.reshape(self.outputs_b_p_10, [-1, 100])
     
-    list_of_tensors = [self.outputs_f_c_r, self.outputs_f_p_50_r, self.outputs_b_p_50_r, self.outputs_f_p_20_r, self.outputs_b_p_20_r, 
-                       self.outputs_b_c_r, self.outputs_f_p_30_r, self.outputs_b_p_30_r, self.outputs_f_p_10_r, self.outputs_b_p_10_r,
-                      ]
+    list_of_tensors = [self.outputs_f_c_r, self.outputs_b_c_r ]
 
     self.input_x_r = tf.reshape(self.input_x[:, 50:750, :], [-1, 122])
     self.outputs_rnn_concat = tf.concat(list_of_tensors, axis = 1)
@@ -180,7 +98,8 @@ class BrnnForPsspModelOne:
     self.input_x_r_gated = tf.multiply(self.output_gate_2, self.input_x_r)
 
     self.op_rnn_and_inp_concat_gated = tf.concat([self.input_x_r_gated, self.outputs_rnn_concat_gated], axis = 1)
-    self.y_predicted = tf.matmul(self.op_rnn_and_inp_concat_gated, self.weight_h) + self.biases 
+    self.h_predicted = tf.nn.relu(tf.matmul(self.op_rnn_and_inp_concat_gated, self.weight_h) + self.biases_h) 
+    self.y_predicted = (tf.matmul(self.h_predicted, self.weight_y) + self.biases_y) 
 
     # [ batch_size*700, 8] <- self.y_predicted 
     self.input_y_o_s = tf.slice(self.input_y_o, [0, 50, 0], [ batch_size, 700, 8])
@@ -277,7 +196,7 @@ class BrnnForPsspModelOne:
 
   def print_biases(self, x, y, seq_len, msks):
     biases = self.sess.run([
-      self.biases],
+      self.biases_y],
       feed_dict = {self.input_x:x, 
         self.input_y:y,
         self.input_seq_len:seq_len,
@@ -467,8 +386,8 @@ if __name__=="__main__":
     epoch_wise_loss.append([loss_train_avg, loss_test_avg])
     print("\n\nPrinting all previous results : \n")
     for i in range(len(epoch_wise_accs)):
-      print("Epoch number, train and test accuracy  :  ", i,  epoch_wise_accs[i], "\n")
-      print("Epoch number, train and test loss      :  ", i, epoch_wise_loss[i], "\n")
+      print("Epoch number, train and test accuracy  :  ", i, epoch_wise_accs[i], "\n")
+      print("Epoch number, train and test loss      :  ", i,epoch_wise_loss[i], "\n")
     #   #   #  #    #   #   #  #    #   #   #  #    #   #   #  #    #   #   #  #    #   #   ##
     print('')
     # Save model weights to disk
@@ -487,111 +406,122 @@ if __name__=="__main__":
     
 
 
-
-
-
-
-
-
 """
-Epochs - 23
+Epoch no - 25
 
 Printing all previous results : 
 
-Epoch number, train and test accuracy :  [0.37182001041811569, 0.48988954722881317] 
+Epoch number, train and test accuracy  :   [0.37805063779964004, 0.4971153736114502] 
 
-Epoch number, train and test loss     :  [1.6245345459427945, 1.3990778625011444] 
+Epoch number, train and test loss      :   [1.6179971611777018, 1.3626552224159241] 
 
-Epoch number, train and test accuracy :  [0.57618289077004725, 0.58036676049232483] 
+Epoch number, train and test accuracy  :   [0.60232063018998439, 0.62229900062084198] 
 
-Epoch number, train and test loss     :  [1.1724967762481335, 1.1527981162071228] 
+Epoch number, train and test loss      :   [1.1036095439001572, 1.0440989434719086] 
 
-Epoch number, train and test accuracy :  [0.64185926526091819, 0.62394465506076813] 
+Epoch number, train and test accuracy  :   [0.6661252906156141, 0.64771446585655212] 
 
-Epoch number, train and test loss     :  [0.99632049022718916, 1.0369440317153931] 
+Epoch number, train and test loss      :   [0.92212601733762167, 0.97152601182460785] 
 
-Epoch number, train and test accuracy :  [0.66414073317549949, 0.63620558381080627] 
+Epoch number, train and test accuracy  :   [0.68382671821949093, 0.658612921833992] 
 
-Epoch number, train and test loss     :  [0.93061115575391196, 1.0039246827363968] 
+Epoch number, train and test loss      :   [0.87166827362637189, 0.94170501828193665] 
 
-Epoch number, train and test accuracy :  [0.67507580546445622, 0.64981165528297424] 
+Epoch number, train and test accuracy  :   [0.69408401223116145, 0.66722823679447174] 
 
-Epoch number, train and test loss     :  [0.89713181589925017, 0.9688372015953064] 
+Epoch number, train and test loss      :   [0.84174193615137149, 0.92323000729084015] 
 
-Epoch number, train and test accuracy :  [0.68262117685273638, 0.65644468367099762] 
+Epoch number, train and test accuracy  :   [0.7016183207201403, 0.67212322354316711] 
 
-Epoch number, train and test loss     :  [0.87454793065093284, 0.95363233983516693] 
+Epoch number, train and test loss      :   [0.82055479149485744, 0.91195714473724365] 
 
-Epoch number, train and test accuracy :  [0.68872797211935355, 0.66109111905097961] 
+Epoch number, train and test accuracy  :   [0.70745934996494031, 0.6746903657913208] 
 
-Epoch number, train and test loss     :  [0.85729167904964709, 0.94325774908065796] 
+Epoch number, train and test loss      :   [0.8037152997283048, 0.90571565926074982] 
 
-Epoch number, train and test accuracy :  [0.69396508017251657, 0.66387762129306793] 
+Epoch number, train and test accuracy  :   [0.71280351350473803, 0.67656940221786499] 
 
-Epoch number, train and test loss     :  [0.8430587538453036, 0.93352161347866058] 
+Epoch number, train and test loss      :   [0.78869238426518995, 0.90310183167457581] 
 
-Epoch number, train and test accuracy :  [0.69831929927648495, 0.66738046705722809] 
+Epoch number, train and test accuracy  :   [0.71757670613222346, 0.67867910861968994] 
 
-Epoch number, train and test loss     :  [0.83059754482535431, 0.92686386406421661] 
+Epoch number, train and test loss      :   [0.77508469237837685, 0.90411253273487091] 
 
-Epoch number, train and test accuracy :  [0.70223870804143507, 0.66814586520195007] 
+Epoch number, train and test accuracy  :   [0.72163129545921501, 0.67807532846927643] 
 
-Epoch number, train and test loss     :  [0.81921643295953439, 0.92490804195404053] 
+Epoch number, train and test loss      :   [0.76314334536707673, 0.90503294765949249] 
 
-Epoch number, train and test accuracy :  [0.70527675401332768, 0.66816253960132599] 
+Epoch number, train and test accuracy  :   [0.72530176057371987, 0.67821606993675232] 
 
-Epoch number, train and test loss     :  [0.8105346421862758, 0.9224637895822525] 
+Epoch number, train and test loss      :   [0.75336690004481821, 0.90635943412780762] 
 
-Epoch number, train and test accuracy :  [0.70811887397322548, 0.66766357421875] 
+Epoch number, train and test accuracy  :   [0.72769365892853843, 0.678656205534935] 
 
-Epoch number, train and test loss     :  [0.80318136270656137, 0.92223608493804932] 
+Epoch number, train and test loss      :   [0.74631011347438014, 0.90783089399337769] 
 
-Epoch number, train and test accuracy :  [0.71010289774384605, 0.67270845174789429] 
+Epoch number, train and test accuracy  :   [0.7288044552470363, 0.67714017629623413] 
 
-Epoch number, train and test loss     :  [0.79739201068878174, 0.91590589284896851] 
+Epoch number, train and test loss      :   [0.74318520967350454, 0.91541962325572968] 
 
-Epoch number, train and test accuracy :  [0.712468029454697, 0.67302675545215607] 
+Epoch number, train and test accuracy  :   [0.72957036938778186, 0.6678030788898468] 
 
-Epoch number, train and test loss     :  [0.79070004751515943, 0.91907425224781036] 
+Epoch number, train and test loss      :   [0.74030166448548784, 0.94929313659667969] 
 
-Epoch number, train and test accuracy :  [0.71539708902669508, 0.67249715328216553] 
+Epoch number, train and test accuracy  :   [0.7306675079256989, 0.67529319226741791] 
 
-Epoch number, train and test loss     :  [0.78227451928826264, 0.92235612869262695] 
+Epoch number, train and test loss      :   [0.73795226424239402, 0.92404806613922119] 
 
-Epoch number, train and test accuracy :  [0.71650589621344274, 0.67420777678489685] 
+Epoch number, train and test accuracy  :   [0.73251106018243839, 0.67337857186794281] 
 
-Epoch number, train and test loss     :  [0.77872748984846962, 0.9141831248998642] 
+Epoch number, train and test loss      :   [0.7326425812965216, 0.93292906880378723] 
 
-Epoch number, train and test accuracy :  [0.71812216764272641, 0.67250759899616241] 
+Epoch number, train and test accuracy  :   [0.73288577101951424, 0.6736832857131958] 
 
-Epoch number, train and test loss     :  [0.77401481950005824, 0.91767117381095886] 
+Epoch number, train and test loss      :   [0.7306562786878541, 0.94083541631698608] 
 
-Epoch number, train and test accuracy :  [0.72063446737999137, 0.67353959381580353] 
+Epoch number, train and test accuracy  :   [0.73815024869386536, 0.67485079169273376] 
 
-Epoch number, train and test loss     :  [0.76678651848504709, 0.91578900814056396] 
+Epoch number, train and test loss      :   [0.71617520687191982, 0.93526270985603333] 
 
-Epoch number, train and test accuracy :  [0.72217469853024152, 0.66942186653614044] 
+Epoch number, train and test accuracy  :   [0.74252836371577058, 0.67572478950023651] 
 
-Epoch number, train and test loss     :  [0.76098994460216784, 0.92146140336990356] 
+Epoch number, train and test loss      :   [0.70212949847066131, 0.93878275156021118] 
 
-Epoch number, train and test accuracy :  [0.72355714232422585, 0.67043545842170715] 
+Epoch number, train and test accuracy  :   [0.7441022922826368, 0.67329733073711395] 
 
-Epoch number, train and test loss     :  [0.75651927327000823, 0.92882430553436279] 
+Epoch number, train and test loss      :   [0.69719453745110094, 0.93795515596866608] 
 
-Epoch number, train and test accuracy :  [0.72445358647856606, 0.67202351987361908] 
+Epoch number, train and test accuracy  :   [0.74492892692255419, 0.6710340827703476] 
 
-Epoch number, train and test loss     :  [0.75536075580951778, 0.91892747581005096] 
+Epoch number, train and test loss      :   [0.69494780412940094, 0.94677163660526276] 
 
-Epoch number, train and test accuracy :  [0.72592693012814191, 0.67312543094158173] 
+Epoch number, train and test accuracy  :   [0.74578468189683067, 0.66856154799461365] 
 
-Epoch number, train and test loss     :  [0.75093791096709495, 0.92074498534202576] 
+Epoch number, train and test loss      :   [0.69205930898355883, 0.9587433785200119] 
 
-Epoch number, train and test accuracy :  [0.72691613574360692, 0.6701509952545166] 
+Epoch number, train and test accuracy  :   [0.7467722532361053, 0.67008766531944275] 
 
-Epoch number, train and test loss     :  [0.74755739888479544, 0.92953823506832123] 
+Epoch number, train and test loss      :   [0.68893980702688529, 0.96227425336837769] 
+
+Epoch number, train and test accuracy  :   [0.74685281930967817, 0.66846659779548645] 
+
+Epoch number, train and test loss      :   [0.68764669534771938, 0.96402691304683685] 
+
+Epoch number, train and test accuracy  :   [0.74477707369382995, 0.67108426988124847] 
+
+Epoch number, train and test loss      :   [0.69276687294937844, 0.95000253617763519] 
+
+
+
 
 
 """
+
+
+
+
+
+
 
 
 
