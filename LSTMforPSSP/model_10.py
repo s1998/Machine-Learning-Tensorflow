@@ -1,4 +1,4 @@
-# removed all maxpooling sliding windows + relu was introduced + weighted gates
+# removed all maxpooling sliding windows + relu was introduced + increased the number of hudden units + weighted gates
 import tensorflow as tf
 from tensorflow.contrib import rnn
 import pickle
@@ -37,7 +37,7 @@ def get_data_train():
 class BrnnForPsspModelOne:
   def __init__(self,model_path,load_model_filename,curr_model_filename,
     num_classes = 8,
-    hidden_units = 100,
+    hidden_units = 200,
     batch_size = 128):
     print("Initializing model..")
     p=time.time()
@@ -81,11 +81,11 @@ class BrnnForPsspModelOne:
     self.outputs_f = self.outputs[0]
     self.outputs_b = self.outputs[1]
 
-    self.outputs_f_c = tf.slice(self.outputs_f, [0, 50, 0], [ batch_size, 700, 100])
-    self.outputs_b_c = tf.slice(self.outputs_b, [0, 50, 0], [ batch_size, 700, 100])
+    self.outputs_f_c = tf.slice(self.outputs_f, [0, 50, 0], [ batch_size, 700, 200])
+    self.outputs_b_c = tf.slice(self.outputs_b, [0, 50, 0], [ batch_size, 700, 200])
 
-    self.outputs_f_c_r = tf.reshape(self.outputs_f_c, [-1, 100])
-    self.outputs_b_c_r = tf.reshape(self.outputs_b_c, [-1, 100])
+    self.outputs_f_c_r = tf.reshape(self.outputs_f_c, [-1, 200])
+    self.outputs_b_c_r = tf.reshape(self.outputs_b_c, [-1, 200])
     
     list_of_tensors = [self.outputs_f_c_r, self.outputs_b_c_r ]
 
@@ -490,7 +490,7 @@ Epoch number, train and test loss      :   [0.70212949847066131, 0.9387827515602
 
 Epoch number, train and test accuracy  :   [0.7441022922826368, 0.67329733073711395] 
 
-Epoch number, train and test loss      :   [0.69719453745110094, 0.93795515596866608] 
+Epoch number, train and test loss      :   [0.69719453745120094, 0.93795515596866608] 
 
 Epoch number, train and test accuracy  :   [0.74492892692255419, 0.6710340827703476] 
 

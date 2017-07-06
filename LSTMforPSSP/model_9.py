@@ -1,4 +1,5 @@
 # removed all maxpooling sliding windows + relu was introduced + concatenated maxpooling over all layers to input.
+# no padding this time in the sequence
 import tensorflow as tf
 from tensorflow.contrib import rnn
 import pickle
@@ -403,14 +404,14 @@ if __name__=="__main__":
     loss_test_avg = loss_test_avg / len(loss_test)
 
     print("\n\n\n")
-    print("Epoch number and 'current' results on train data : ", acc_train_avg, loss_train_avg)
+    print("Epoch number and 'current' results on train data :  ", acc_train_avg, loss_train_avg)
     print("Epoch number and 'current' results on test data  : ", acc_test_avg, loss_test_avg)
     epoch_wise_accs.append([acc_train_avg, acc_test_avg])
     epoch_wise_loss.append([loss_train_avg, loss_test_avg])
     print("\n\nPrinting all previous results : \n")
     for i in range(len(epoch_wise_accs)):
       print("Epoch number, train and test accuracy  :  ", i, epoch_wise_accs[i], "\n")
-      print("Epoch number, train and test loss      :  ", i,epoch_wise_loss[i], "\n")
+      print("Epoch number, train and test loss   :  ", i,epoch_wise_loss[i], "\n")
     #   #   #  #    #   #   #  #    #   #   #  #    #   #   #  #    #   #   #  #    #   #   ##
     print('')
     # Save model weights to disk
