@@ -493,7 +493,7 @@ Predicted :
 
 avg / total       1.00      1.00      1.00     28142
 
-self.biases :  array([[ 0.07871722, -0.10666627,  0.0312885 , -0.09511936, -0.1176827 ,         0.07463975, -0.05208393, -0.02114869]], dtype=float32)
+self.biases :  array([[ 0.07871722, -0.10666627,  0.0312885 , -0.09511936, -0.1176827 , 0.07463975, -0.05208393, -0.02114869]], dtype=float32)
 Epoch number and batch_no:  24 1
 Loss before optimizing :  0.742551
 Loss, accuracy and verification results :  0.742551 0.730443
@@ -523,7 +523,7 @@ Predicted :
 
 avg / total       1.00      1.00      1.00     28506
 
-self.biases :  array([[ 0.07836414, -0.10662069,  0.03156305, -0.09429678, -0.11771374,         0.07492013, -0.05274583, -0.02143718]], dtype=float32)
+self.biases :  array([[ 0.07836414, -0.10662069,  0.03156305, -0.09429678, -0.11771374, 0.07492013, -0.05274583, -0.02143718]], dtype=float32)
 Epoch number and batch_no:  24 2
 Loss before optimizing :  0.764658
 Loss, accuracy and verification results :  0.764658 0.723591
@@ -554,7 +554,7 @@ Predicted :
 
 avg / total       1.00      1.00      1.00     29109
 
-self.biases :  array([[ 0.07865993, -0.1066669 ,  0.03127258, -0.09252238, -0.1176962 ,         0.0743373 , -0.05299836, -0.02122982]], dtype=float32)
+self.biases :  array([[ 0.07865993, -0.1066669 ,  0.03127258, -0.09252238, -0.1176962 , 0.0743373 , -0.05299836, -0.02122982]], dtype=float32)
 Epoch number and batch_no:  24 3
 Loss before optimizing :  0.788642
 Loss, accuracy and verification results :  0.788642 0.711216
@@ -584,7 +584,7 @@ Predicted :
 
 avg / total       1.00      1.00      1.00     24572
 
-self.biases :  array([[ 0.07873708, -0.10733859,  0.03075297, -0.09360427, -0.11769734,         0.07456625, -0.05227291, -0.02078923]], dtype=float32)
+self.biases :  array([[ 0.07873708, -0.10733859,  0.03075297, -0.09360427, -0.11769734, 0.07456625, -0.05227291, -0.02078923]], dtype=float32)
 Epoch number and batch_no:  24 4
 Loss before optimizing :  0.751583
 Loss, accuracy and verification results :  0.751583 0.728656
@@ -615,7 +615,7 @@ Predicted :
 
 avg / total       1.00      1.00      1.00     26424
 
-self.biases :  array([[ 0.07839358, -0.10756785,  0.03069585, -0.09488192, -0.11760361,         0.07528602, -0.05191827, -0.02099118]], dtype=float32)
+self.biases :  array([[ 0.07839358, -0.10756785,  0.03069585, -0.09488192, -0.11760361, 0.07528602, -0.05191827, -0.02099118]], dtype=float32)
 Epoch number and batch_no:  24 5
 Loss before optimizing :  0.783549
 Loss, accuracy and verification results :  0.783549 0.714248
@@ -646,7 +646,7 @@ Predicted :
 
 avg / total       1.00      1.00      1.00     26544
 
-self.biases :  array([[ 0.07882353, -0.10705434,  0.03120721, -0.09478401, -0.11746619,         0.0750343 , -0.05282249, -0.02121253]], dtype=float32)
+self.biases :  array([[ 0.07882353, -0.10705434,  0.03120721, -0.09478401, -0.11746619, 0.0750343 , -0.05282249, -0.02121253]], dtype=float32)
 Epoch number and batch_no:  24 6
 Loss before optimizing :  0.788518
 Loss, accuracy and verification results :  0.788518 0.706991
@@ -677,7 +677,7 @@ Predicted :
 
 avg / total       1.00      1.00      1.00     26890
 
-self.biases :  array([[ 0.07917589, -0.10670131,  0.03139904, -0.09398531, -0.11721164,         0.07470309, -0.05307611, -0.02180175]], dtype=float32)
+self.biases :  array([[ 0.07917589, -0.10670131,  0.03139904, -0.09398531, -0.11721164, 0.07470309, -0.05307611, -0.02180175]], dtype=float32)
 Epoch number and batch_no:  24 7
 Loss before optimizing :  0.816213
 Loss, accuracy and verification results :  0.816212 0.704458
@@ -708,7 +708,7 @@ Predicted :
 
 avg / total       1.00      1.00      1.00     31268
 
-self.biases :  array([[ 0.07812377, -0.10741232,  0.03118096, -0.093697  , -0.11690104,         0.07519097, -0.05262629, -0.02145646]], dtype=float32)
+self.biases :  array([[ 0.07812377, -0.10741232,  0.03118096, -0.093697  , -0.11690104, 0.07519097, -0.05262629, -0.02145646]], dtype=float32)
 Epoch number and batch_no:  24 8
 Loss before optimizing :  0.794212
 Loss, accuracy and verification results :  0.794212 0.708057
@@ -738,7 +738,7 @@ Predicted :
 
 avg / total       1.00      1.00      1.00     27615
 
-self.biases :  array([[ 0.07869749, -0.10840046,  0.03092775, -0.0944242 , -0.11663551,         0.07530384, -0.05229875, -0.0216664 ]], dtype=float32)
+self.biases :  array([[ 0.07869749, -0.10840046,  0.03092775, -0.0944242 , -0.11663551, 0.07530384, -0.05229875, -0.0216664 ]], dtype=float32)
 Epoch number and batch_no:  24 9
 Loss before optimizing :  0.780608
 Loss, accuracy and verification results :  0.780608 0.715009
@@ -769,7 +769,7 @@ Predicted :
 
 avg / total       1.00      1.00      1.00     26285
 
-self.biases :  array([[ 0.07949063, -0.1085063 ,  0.03100576, -0.09473288, -0.11630622,         0.07494033, -0.05277193, -0.02155745]], dtype=float32)
+self.biases :  array([[ 0.07949063, -0.1085063 ,  0.03100576, -0.09473288, -0.11630622, 0.07494033, -0.05277193, -0.02155745]], dtype=float32)
 Epoch number and batch_no:  24 10
 Loss before optimizing :  0.802024
 Loss, accuracy and verification results :  0.802024 0.706087
@@ -800,7 +800,7 @@ Predicted :
 
 avg / total       1.00      1.00      1.00     27947
 
-self.biases :  array([[ 0.07770943, -0.10785821,  0.03126609, -0.09405184, -0.11593512,         0.07559866, -0.05292526, -0.02129463]], dtype=float32)
+self.biases :  array([[ 0.07770943, -0.10785821,  0.03126609, -0.09405184, -0.11593512, 0.07559866, -0.05292526, -0.02129463]], dtype=float32)
 Epoch number and batch_no:  24 11
 Loss before optimizing :  0.774335
 Loss, accuracy and verification results :  0.774335 0.718985
@@ -831,7 +831,7 @@ Predicted :
 
 avg / total       1.00      1.00      1.00     25415
 
-self.biases :  array([[ 0.07840946, -0.10706882,  0.03070186, -0.09411279, -0.1155308 ,         0.07575607, -0.05311453, -0.02166159]], dtype=float32)
+self.biases :  array([[ 0.07840946, -0.10706882,  0.03070186, -0.09411279, -0.1155308 , 0.07575607, -0.05311453, -0.02166159]], dtype=float32)
 Epoch number and batch_no:  24 12
 Loss before optimizing :  0.75753
 Loss, accuracy and verification results :  0.75753 0.723952
@@ -862,7 +862,7 @@ Predicted :
 
 avg / total       1.00      1.00      1.00     27430
 
-self.biases :  array([[ 0.07962331, -0.10749419,  0.03106739, -0.09436602, -0.11521721,         0.07438142, -0.05238233, -0.02203336]], dtype=float32)
+self.biases :  array([[ 0.07962331, -0.10749419,  0.03106739, -0.09436602, -0.11521721, 0.07438142, -0.05238233, -0.02203336]], dtype=float32)
 Epoch number and batch_no:  24 13
 Loss before optimizing :  0.821907
 Loss, accuracy and verification results :  0.821907 0.700322
@@ -893,7 +893,7 @@ Predicted :
 
 avg / total       1.00      1.00      1.00     29822
 
-self.biases :  array([[ 0.07794996, -0.10847027,  0.03202765, -0.09473058, -0.11503404,         0.07459877, -0.05189231, -0.02175912]], dtype=float32)
+self.biases :  array([[ 0.07794996, -0.10847027,  0.03202765, -0.09473058, -0.11503404, 0.07459877, -0.05189231, -0.02175912]], dtype=float32)
 Epoch number and batch_no:  24 14
 Loss before optimizing :  0.795177
 Loss, accuracy and verification results :  0.795177 0.707497
@@ -924,7 +924,7 @@ Predicted :
 
 avg / total       1.00      1.00      1.00     28704
 
-self.biases :  array([[ 0.07859263, -0.10890207,  0.03104443, -0.09469312, -0.11497201,         0.07579909, -0.05334471, -0.0215267 ]], dtype=float32)
+self.biases :  array([[ 0.07859263, -0.10890207,  0.03104443, -0.09469312, -0.11497201, 0.07579909, -0.05334471, -0.0215267 ]], dtype=float32)
 Epoch number and batch_no:  24 15
 Loss before optimizing :  0.791629
 Loss, accuracy and verification results :  0.791629 0.709597
@@ -955,7 +955,7 @@ Predicted :
 
 avg / total       1.00      1.00      1.00     27145
 
-self.biases :  array([[ 0.07946321, -0.10828481,  0.03009636, -0.09392726, -0.11498001,         0.07562473, -0.05350209, -0.0213807 ]], dtype=float32)
+self.biases :  array([[ 0.07946321, -0.10828481,  0.03009636, -0.09392726, -0.11498001, 0.07562473, -0.05350209, -0.0213807 ]], dtype=float32)
 Epoch number and batch_no:  24 16
 Loss before optimizing :  0.812789
 Loss, accuracy and verification results :  0.812789 0.701827
@@ -986,7 +986,7 @@ Predicted :
 
 avg / total       1.00      1.00      1.00     28138
 
-self.biases :  array([[ 0.07796312, -0.10723377,  0.0312274 , -0.09406365, -0.11504693,         0.07503988, -0.05208235, -0.02183082]], dtype=float32)
+self.biases :  array([[ 0.07796312, -0.10723377,  0.0312274 , -0.09406365, -0.11504693, 0.07503988, -0.05208235, -0.02183082]], dtype=float32)
 Epoch number and batch_no:  24 17
 Loss before optimizing :  0.782728
 Loss, accuracy and verification results :  0.782728 0.71783
@@ -1017,7 +1017,7 @@ Predicted :
 
 avg / total       1.00      1.00      1.00     27852
 
-self.biases :  array([[ 0.07803096, -0.10676271,  0.03213567, -0.09538028, -0.11510528,         0.07525212, -0.0524668 , -0.0225813 ]], dtype=float32)
+self.biases :  array([[ 0.07803096, -0.10676271,  0.03213567, -0.09538028, -0.11510528, 0.07525212, -0.0524668 , -0.0225813 ]], dtype=float32)
 Epoch number and batch_no:  24 18
 Loss before optimizing :  0.804841
 Loss, accuracy and verification results :  0.804841 0.705551
@@ -1048,7 +1048,7 @@ Predicted :
 
 avg / total       1.00      1.00      1.00     27706
 
-self.biases :  array([[ 0.0795958 , -0.10729884,  0.030536  , -0.09589738, -0.114986  ,         0.07629535, -0.0536414 , -0.02224486]], dtype=float32)
+self.biases :  array([[ 0.0795958 , -0.10729884,  0.030536  , -0.09589738, -0.114986  , 0.07629535, -0.0536414 , -0.02224486]], dtype=float32)
 Epoch number and batch_no:  24 19
 Loss before optimizing :  0.811752
 Loss, accuracy and verification results :  0.811752 0.708277
@@ -1078,7 +1078,7 @@ Predicted :
 
 avg / total       1.00      1.00      1.00     30097
 
-self.biases :  array([[ 0.07819544, -0.10737482,  0.02989551, -0.0945313 , -0.11492437,         0.07639644, -0.05323956, -0.02082648]], dtype=float32)
+self.biases :  array([[ 0.07819544, -0.10737482,  0.02989551, -0.0945313 , -0.11492437, 0.07639644, -0.05323956, -0.02082648]], dtype=float32)
 Epoch number and batch_no:  24 20
 Loss before optimizing :  0.834973
 Loss, accuracy and verification results :  0.834973 0.697361
@@ -1108,7 +1108,7 @@ Predicted :
 
 avg / total       1.00      1.00      1.00     26639
 
-self.biases :  array([[ 0.07774928, -0.10726624,  0.03078964, -0.09345114, -0.11492873,         0.07553801, -0.05197434, -0.02220735]], dtype=float32)
+self.biases :  array([[ 0.07774928, -0.10726624,  0.03078964, -0.09345114, -0.11492873, 0.07553801, -0.05197434, -0.02220735]], dtype=float32)
 Epoch number and batch_no:  24 21
 Loss before optimizing :  0.825715
 Loss, accuracy and verification results :  0.825715 0.698127
@@ -1139,7 +1139,7 @@ Predicted :
 
 avg / total       1.00      1.00      1.00     29042
 
-self.biases :  array([[ 0.07901042, -0.10772236,  0.03209126, -0.09536824, -0.11490013,         0.0752131 , -0.05265483, -0.02332647]], dtype=float32)
+self.biases :  array([[ 0.07901042, -0.10772236,  0.03209126, -0.09536824, -0.11490013, 0.0752131 , -0.05265483, -0.02332647]], dtype=float32)
 Epoch number and batch_no:  24 22
 Loss before optimizing :  0.794484
 Loss, accuracy and verification results :  0.794484 0.71045
@@ -1170,7 +1170,7 @@ Predicted :
 
 avg / total       1.00      1.00      1.00     28862
 
-self.biases :  array([[ 0.07890058, -0.10780241,  0.03201717, -0.09646016, -0.11477714,         0.07571667, -0.05375372, -0.02208827]], dtype=float32)
+self.biases :  array([[ 0.07890058, -0.10780241,  0.03201717, -0.09646016, -0.11477714, 0.07571667, -0.05375372, -0.02208827]], dtype=float32)
 Epoch number and batch_no:  24 23
 Loss before optimizing :  0.840098
 Loss, accuracy and verification results :  0.840098 0.7006
@@ -1200,7 +1200,7 @@ Predicted :
 
 avg / total       1.00      1.00      1.00     27318
 
-self.biases :  array([[ 0.07849568, -0.10707024,  0.03071881, -0.09551328, -0.11476803,         0.07536051, -0.05329784, -0.02019043]], dtype=float32)
+self.biases :  array([[ 0.07849568, -0.10707024,  0.03071881, -0.09551328, -0.11476803, 0.07536051, -0.05329784, -0.02019043]], dtype=float32)
 Epoch number and batch_no:  24 24
 Loss before optimizing :  0.820206
 Loss, accuracy and verification results :  0.820206 0.700158
@@ -1230,7 +1230,7 @@ Predicted :
 
 avg / total       1.00      1.00      1.00     24046
 
-self.biases :  array([[ 0.07874524, -0.10691094,  0.0312517 , -0.09353626, -0.1148795 ,         0.07466471, -0.05220991, -0.02255987]], dtype=float32)
+self.biases :  array([[ 0.07874524, -0.10691094,  0.0312517 , -0.09353626, -0.1148795 , 0.07466471, -0.05220991, -0.02255987]], dtype=float32)
 Epoch number and batch_no:  24 25
 Loss before optimizing :  0.7919
 Loss, accuracy and verification results :  0.7919 0.713835
@@ -1261,7 +1261,7 @@ Predicted :
 
 avg / total       1.00      1.00      1.00     25999
 
-self.biases :  array([[ 0.07851457, -0.10772689,  0.03243906, -0.09427661, -0.11505549,         0.07520741, -0.05264975, -0.0238317 ]], dtype=float32)
+self.biases :  array([[ 0.07851457, -0.10772689,  0.03243906, -0.09427661, -0.11505549, 0.07520741, -0.05264975, -0.0238317 ]], dtype=float32)
 Epoch number and batch_no:  24 26
 Loss before optimizing :  0.807878
 Loss, accuracy and verification results :  0.807878 0.708842
@@ -1292,7 +1292,7 @@ Predicted :
 
 avg / total       1.00      1.00      1.00     27346
 
-self.biases :  array([[ 0.07816944, -0.10825361,  0.03209044, -0.09616827, -0.11516436,         0.07631943, -0.0538895 , -0.02207556]], dtype=float32)
+self.biases :  array([[ 0.07816944, -0.10825361,  0.03209044, -0.09616827, -0.11516436, 0.07631943, -0.0538895 , -0.02207556]], dtype=float32)
 Epoch number and batch_no:  24 27
 Loss before optimizing :  0.835478
 Loss, accuracy and verification results :  0.835478 0.699123
@@ -1323,7 +1323,7 @@ Predicted :
 
 avg / total       1.00      1.00      1.00     27586
 
-self.biases :  array([[ 0.07847539, -0.10756827,  0.0304428 , -0.09609248, -0.1152446 ,         0.07604292, -0.05351998, -0.0200578 ]], dtype=float32)
+self.biases :  array([[ 0.07847539, -0.10756827,  0.0304428 , -0.09609248, -0.1152446 , 0.07604292, -0.05351998, -0.0200578 ]], dtype=float32)
 Epoch number and batch_no:  24 28
 Loss before optimizing :  0.797653
 Loss, accuracy and verification results :  0.797653 0.705795
@@ -1353,7 +1353,7 @@ Predicted :
 
 avg / total       1.00      1.00      1.00     26886
 
-self.biases :  array([[ 0.0789755 , -0.1070452 ,  0.03019514, -0.09425484, -0.11535253,         0.07584233, -0.05235997, -0.0224213 ]], dtype=float32)
+self.biases :  array([[ 0.0789755 , -0.1070452 ,  0.03019514, -0.09425484, -0.11535253, 0.07584233, -0.05235997, -0.0224213 ]], dtype=float32)
 Epoch number and batch_no:  24 29
 Loss before optimizing :  0.811517
 Loss, accuracy and verification results :  0.811517 0.703763
@@ -1383,7 +1383,7 @@ Predicted :
 
 avg / total       1.00      1.00      1.00     25142
 
-self.biases :  array([[ 0.07774952, -0.10751382,  0.03174043, -0.09362643, -0.11548319,         0.0759009 , -0.05260671, -0.02329716]], dtype=float32)
+self.biases :  array([[ 0.07774952, -0.10751382,  0.03174043, -0.09362643, -0.11548319, 0.0759009 , -0.05260671, -0.02329716]], dtype=float32)
 Epoch number and batch_no:  24 30
 Loss before optimizing :  0.78359
 Loss, accuracy and verification results :  0.78359 0.710719
@@ -1413,7 +1413,7 @@ Predicted :
 
 avg / total       1.00      1.00      1.00     27195
 
-self.biases :  array([[ 0.07852234, -0.10856073,  0.03227547, -0.09569729, -0.11564005,         0.0756449 , -0.05407729, -0.02161125]], dtype=float32)
+self.biases :  array([[ 0.07852234, -0.10856073,  0.03227547, -0.09569729, -0.11564005, 0.0756449 , -0.05407729, -0.02161125]], dtype=float32)
 Epoch number and batch_no:  24 31
 Loss before optimizing :  0.769116
 Loss, accuracy and verification results :  0.769116 0.722711
@@ -1443,7 +1443,7 @@ Predicted :
 
 avg / total       1.00      1.00      1.00     25010
 
-self.biases :  array([[ 0.07995351, -0.10840041,  0.03101284, -0.0967247 , -0.11581582,         0.07507031, -0.05432675, -0.01969656]], dtype=float32)
+self.biases :  array([[ 0.07995351, -0.10840041,  0.03101284, -0.0967247 , -0.11581582, 0.07507031, -0.05432675, -0.01969656]], dtype=float32)
 Epoch number and batch_no:  24 32
 Loss before optimizing :  0.846976
 Loss, accuracy and verification results :  0.846976 0.692065
@@ -1473,7 +1473,7 @@ Predicted :
 
 avg / total       1.00      1.00      1.00     29766
 
-self.biases :  array([[ 0.07944612, -0.10719723,  0.03060527, -0.09542882, -0.1160223 ,         0.07505858, -0.05253171, -0.02127934]], dtype=float32)
+self.biases :  array([[ 0.07944612, -0.10719723,  0.03060527, -0.09542882, -0.1160223 , 0.07505858, -0.05253171, -0.02127934]], dtype=float32)
 Epoch number and batch_no:  24 33
 Loss before optimizing :  0.793017
 Loss, accuracy and verification results :  0.793017 0.711866
@@ -1503,7 +1503,7 @@ Predicted :
 
 avg / total       1.00      1.00      1.00     25037
 
-self.biases :  array([[ 0.07826986, -0.10644323,  0.03096126, -0.09349435, -0.11626986,         0.07488962, -0.05131477, -0.02260619]], dtype=float32)
+self.biases :  array([[ 0.07826986, -0.10644323,  0.03096126, -0.09349435, -0.11626986, 0.07488962, -0.05131477, -0.02260619]], dtype=float32)
 Epoch number and batch_no:  24 34
 Loss before optimizing :  0.817442
 Loss, accuracy and verification results :  0.817442 0.693904
@@ -1534,7 +1534,7 @@ Predicted :
 
 avg / total       1.00      1.00      1.00     28625
 
-self.biases :  array([[ 0.07959015, -0.10813498,  0.03160815, -0.09469204, -0.11651908,         0.07488431, -0.05363546, -0.02169225]], dtype=float32)
+self.biases :  array([[ 0.07959015, -0.10813498,  0.03160815, -0.09469204, -0.11651908, 0.07488431, -0.05363546, -0.02169225]], dtype=float32)
 Epoch number and batch_no:  24 35
 Loss before optimizing :  0.75907
 Loss, accuracy and verification results :  0.75907 0.726096
@@ -1564,7 +1564,7 @@ Predicted :
 
 avg / total       1.00      1.00      1.00     26042
 
-self.biases :  array([[ 0.07989886, -0.10933239,  0.0317219 , -0.09601326, -0.11682158,         0.07507545, -0.05472383, -0.02027796]], dtype=float32)
+self.biases :  array([[ 0.07989886, -0.10933239,  0.0317219 , -0.09601326, -0.11682158, 0.07507545, -0.05472383, -0.02027796]], dtype=float32)
 Epoch number and batch_no:  24 36
 Loss before optimizing :  0.808002
 Loss, accuracy and verification results :  0.808002 0.711731
@@ -1593,7 +1593,7 @@ Predicted :
 
 avg / total       1.00      1.00      1.00     29018
 
-self.biases :  array([[ 0.07908238, -0.10937514,  0.03131425, -0.09569722, -0.11715259,         0.0756515 , -0.05348292, -0.02091847]], dtype=float32)
+self.biases :  array([[ 0.07908238, -0.10937514,  0.03131425, -0.09569722, -0.11715259, 0.0756515 , -0.05348292, -0.02091847]], dtype=float32)
 Epoch number and batch_no:  24 37
 Loss before optimizing :  0.816881
 Loss, accuracy and verification results :  0.816881 0.709143
@@ -1624,7 +1624,7 @@ Predicted :
 
 avg / total       1.00      1.00      1.00     28447
 
-self.biases :  array([[ 0.07887617, -0.1083409 ,  0.03048332, -0.09386648, -0.11742368,         0.07540322, -0.05169147, -0.02216252]], dtype=float32)
+self.biases :  array([[ 0.07887617, -0.1083409 ,  0.03048332, -0.09386648, -0.11742368, 0.07540322, -0.05169147, -0.02216252]], dtype=float32)
 Epoch number and batch_no:  24 38
 Loss before optimizing :  0.781797
 Loss, accuracy and verification results :  0.781797 0.713087
@@ -1654,7 +1654,7 @@ Predicted :
 
 avg / total       1.00      1.00      1.00     26698
 
-self.biases :  array([[ 0.07955339, -0.1074403 ,  0.03046544, -0.0933149 , -0.11768756,         0.07512727, -0.05287499, -0.02187489]], dtype=float32)
+self.biases :  array([[ 0.07955339, -0.1074403 ,  0.03046544, -0.0933149 , -0.11768756, 0.07512727, -0.05287499, -0.02187489]], dtype=float32)
 Epoch number and batch_no:  24 39
 Loss before optimizing :  0.762326
 Loss, accuracy and verification results :  0.762326 0.721941
@@ -1684,7 +1684,7 @@ Predicted :
 
 avg / total       1.00      1.00      1.00     26275
 
-self.biases :  array([[ 0.0793349 , -0.10821328,  0.03122859, -0.09509332, -0.11794056,         0.07575665, -0.05436617, -0.02088144]], dtype=float32)
+self.biases :  array([[ 0.0793349 , -0.10821328,  0.03122859, -0.09509332, -0.11794056, 0.07575665, -0.05436617, -0.02088144]], dtype=float32)
 Epoch number and batch_no:  24 40
 Loss before optimizing :  0.782489
 Loss, accuracy and verification results :  0.782489 0.717525
@@ -1714,7 +1714,7 @@ Predicted :
 
 avg / total       1.00      1.00      1.00     26505
 
-self.biases :  array([[ 0.07930995, -0.10898519,  0.0316079 , -0.09605408, -0.11818439,         0.07590245, -0.05426519, -0.02090688]], dtype=float32)
+self.biases :  array([[ 0.07930995, -0.10898519,  0.0316079 , -0.09605408, -0.11818439, 0.07590245, -0.05426519, -0.02090688]], dtype=float32)
 Epoch number and batch_no:  24 41
 Loss before optimizing :  0.777578
 Loss, accuracy and verification results :  0.777578 0.717204
@@ -1744,7 +1744,7 @@ Predicted :
 
 avg / total       1.00      1.00      1.00     25849
 
-self.biases :  array([[ 0.07973876, -0.10890932,  0.03129011, -0.09489103, -0.11841858,         0.0750198 , -0.05265643, -0.02189067]], dtype=float32)
+self.biases :  array([[ 0.07973876, -0.10890932,  0.03129011, -0.09489103, -0.11841858, 0.0750198 , -0.05265643, -0.02189067]], dtype=float32)
 Epoch number and batch_no:  24 42
 Loss before optimizing :  0.761563
 Loss, accuracy and verification results :  0.761564 0.723168
@@ -1775,7 +1775,7 @@ Predicted :
 
 avg / total       1.00      1.00      1.00     27616
 
-self.biases :  array([[ 0.08008382, -0.10860634,  0.03051052, -0.09386805, -0.1185897 ,         0.07446101, -0.05127084, -0.02235139]], dtype=float32)
+self.biases :  array([[ 0.08008382, -0.10860634,  0.03051052, -0.09386805, -0.1185897 , 0.07446101, -0.05127084, -0.02235139]], dtype=float32)
 Epoch number and testing batch number :  24 0
 Loss, accuracy and verification results :  0.935416 0.662224
 F1 score results : 

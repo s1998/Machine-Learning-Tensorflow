@@ -1,4 +1,4 @@
-# removed all maxpooling sliding windows + relu was introduced + concatenated maxpooling over all layers to input.
+# removed all maxpooling sliding windows + relu was introduced + weighted gates + hidden units - 50
 import tensorflow as tf
 from tensorflow.contrib import rnn
 import pickle
@@ -37,7 +37,7 @@ def get_data_train():
 class BrnnForPsspModelOne:
   def __init__(self,model_path,load_model_filename,curr_model_filename,
     num_classes = 8,
-    hidden_units = 100,
+    hidden_units = 50,
     batch_size = 128):
     print("Initializing model..")
     p=time.time()
@@ -58,16 +58,14 @@ class BrnnForPsspModelOne:
     # define weights and biases here (8 weights + 1 biases)
     self.weight_f_c = tf.Variable(0.01 * tf.random_uniform(shape=[hidden_units, num_classes], maxval=1, dtype=tf.float32), dtype=tf.float32) 
     self.weight_b_c = tf.Variable(0.01 * tf.random_uniform(shape=[hidden_units, num_classes], maxval=1, dtype=tf.float32), dtype=tf.float32) 
-    self.weight_gate_1 = tf.Variable(tf.random_uniform(shape=[hidden_units * 4 + 122, hidden_units * 2], maxval=1, dtype=tf.float32) / tf.sqrt(self.hidden_units * 4 + 122), dtype=tf.float32) 
-    self.weight_gate_2 = tf.Variable(tf.random_uniform(shape=[hidden_units * 4 + 122, 122], maxval=1, dtype=tf.float32) / tf.sqrt(self.hidden_units * 4 + 122), dtype=tf.float32) 
-    self.weight_gate_3 = tf.Variable(tf.random_uniform(shape=[hidden_units * 4 + 122, hidden_units * 2], maxval=1, dtype=tf.float32) / tf.sqrt(self.hidden_units * 4 + 122), dtype=tf.float32) 
-    self.weight_h = tf.Variable(0.01 * tf.random_uniform(shape=[hidden_units * 4 + 122, hidden_units * 4 + 122], maxval=1, dtype=tf.float32) / tf.sqrt((self.hidden_units * 4 + 122) / 2), dtype=tf.float32) 
-    self.weight_y = tf.Variable(0.01 * tf.random_uniform(shape=[hidden_units * 4 + 122, num_classes], maxval=1, dtype=tf.float32) / tf.sqrt(self.hidden_units * 4 + 122), dtype=tf.float32) 
-    self.biases_h = tf.Variable(tf.zeros([hidden_units * 4 + 122], dtype=tf.float32), dtype=tf.float32)
+    self.weight_gate_1 = tf.Variable(tf.random_uniform(shape=[hidden_units * 2 + 122, hidden_units * 2], maxval=1, dtype=tf.float32) / tf.sqrt(self.hidden_units * 2 + 122), dtype=tf.float32) 
+    self.weight_gate_2 = tf.Variable(tf.random_uniform(shape=[hidden_units * 2 + 122, 122], maxval=1, dtype=tf.float32) / tf.sqrt(self.hidden_units * 2 + 122), dtype=tf.float32) 
+    self.weight_h = tf.Variable(0.01 * tf.random_uniform(shape=[hidden_units * 2 + 122, hidden_units * 2 + 122], maxval=1, dtype=tf.float32) / tf.sqrt((self.hidden_units * 2 + 122) / 2), dtype=tf.float32) 
+    self.weight_y = tf.Variable(0.01 * tf.random_uniform(shape=[hidden_units * 2 + 122, num_classes], maxval=1, dtype=tf.float32) / tf.sqrt(self.hidden_units * 2 + 122), dtype=tf.float32) 
+    self.biases_h = tf.Variable(tf.zeros([hidden_units * 2 + 122], dtype=tf.float32), dtype=tf.float32)
     self.biases_y = tf.Variable(tf.zeros([num_classes], dtype=tf.float32), dtype=tf.float32)
     self.biases_gate_1 = tf.Variable(tf.zeros([hidden_units * 2], dtype=tf.float32), dtype=tf.float32)
     self.biases_gate_2 = tf.Variable(tf.zeros([122], dtype=tf.float32), dtype=tf.float32)
-    self.biases_gate_3 = tf.Variable(tf.zeros([hidden_units * 2], dtype=tf.float32), dtype=tf.float32)
     
     self.rnn_cell_f = rnn.GRUCell(num_units = hidden_units, 
                                   activation = tf.tanh)
@@ -83,37 +81,24 @@ class BrnnForPsspModelOne:
     self.outputs_f = self.outputs[0]
     self.outputs_b = self.outputs[1]
 
-    self.outputs_f_c = tf.slice(self.outputs_f, [0, 50, 0], [ batch_size, 700, 100])
-    self.outputs_b_c = tf.slice(self.outputs_b, [0, 50, 0], [ batch_size, 700, 100])
-    self.outputs_f_p = tf.concat(
-                        [ tf.reduce_max(self.outputs_f, axis = 1) ] * 700, axis = 1)
-    self.outputs_b_p = tf.concat(
-                        [ tf.reduce_max(self.outputs_b, axis = 1) ] * 700, axis = 1)
+    self.outputs_f_c = tf.slice(self.outputs_f, [0, 50, 0], [ batch_size, 700, 50])
+    self.outputs_b_c = tf.slice(self.outputs_b, [0, 50, 0], [ batch_size, 700, 50])
 
-    self.outputs_f_c_r = tf.reshape(self.outputs_f_c, [-1, 100])
-    self.outputs_b_c_r = tf.reshape(self.outputs_b_c, [-1, 100])
-    self.outputs_f_p_r = tf.reshape(self.outputs_b_c, [-1, 100])
-    self.outputs_b_p_r = tf.reshape(self.outputs_b_c, [-1, 100])
+    self.outputs_f_c_r = tf.reshape(self.outputs_f_c, [-1, 50])
+    self.outputs_b_c_r = tf.reshape(self.outputs_b_c, [-1, 50])
     
-    list_of_tensors = [self.outputs_f_c_r, self.outputs_b_c_r, self.outputs_f_p_r, self.outputs_b_p_r ]
-    list_of_tensors_1 = [self.outputs_f_c_r, self.outputs_b_c_r ]
-    list_of_tensors_2 = [self.outputs_f_p_r, self.outputs_b_p_r ]
+    list_of_tensors = [self.outputs_f_c_r, self.outputs_b_c_r ]
 
     self.input_x_r = tf.reshape(self.input_x[:, 50:750, :], [-1, 122])
     self.outputs_rnn_concat = tf.concat(list_of_tensors, axis = 1)
-    self.outputs_rnn_c_concat = tf.concat(list_of_tensors_1, axis = 1)
-    self.outputs_rnn_p_concat = tf.concat(list_of_tensors_2, axis = 1)
     self.op_rnn_and_inp_concat = tf.concat([self.input_x_r, self.outputs_rnn_concat], axis = 1)
 
     self.output_gate_1 = tf.sigmoid(tf.matmul(self.op_rnn_and_inp_concat, self.weight_gate_1) + self.biases_gate_1)
     self.output_gate_2 = tf.sigmoid(tf.matmul(self.op_rnn_and_inp_concat, self.weight_gate_2) + self.biases_gate_2)
-    self.output_gate_3 = tf.sigmoid(tf.matmul(self.op_rnn_and_inp_concat, self.weight_gate_3) + self.biases_gate_3)
-    
-    self.outputs_rnn_c_concat_gated = tf.multiply(self.output_gate_1, self.outputs_rnn_c_concat)
+    self.outputs_rnn_concat_gated = tf.multiply(self.output_gate_1, self.outputs_rnn_concat)
     self.input_x_r_gated = tf.multiply(self.output_gate_2, self.input_x_r)
-    self.outputs_rnn_p_concat_gated = tf.multiply(self.output_gate_3, self.outputs_rnn_p_concat)
 
-    self.op_rnn_and_inp_concat_gated = tf.concat([self.input_x_r_gated, self.outputs_rnn_c_concat_gated, self.outputs_rnn_p_concat_gated], axis = 1)
+    self.op_rnn_and_inp_concat_gated = tf.concat([self.input_x_r_gated, self.outputs_rnn_concat_gated], axis = 1)
     self.h_predicted = tf.nn.relu(tf.matmul(self.op_rnn_and_inp_concat_gated, self.weight_h) + self.biases_h) 
     self.y_predicted = (tf.matmul(self.h_predicted, self.weight_y) + self.biases_y) 
 
@@ -419,130 +404,7 @@ if __name__=="__main__":
     #   #   #  #    #   #   #  #    #   #   #  #    #   #   #  #    #   #   #  #    #   #   ##
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-"""
-After 21 epochs : 
-
-Printing all previous results : 
-
-Epoch number, train and test accuracy  :   0 [0.41834001892874406, 0.54344868659973145] 
-
-Epoch number, train and test loss      :   0 [1.6103147323741469, 1.2602879405021667] 
-
-Epoch number, train and test accuracy  :   1 [0.61569721476976258, 0.60929805040359497] 
-
-Epoch number, train and test loss      :   1 [1.0679208067960517, 1.089104026556015] 
-
-Epoch number, train and test accuracy  :   2 [0.66133896694626915, 0.64129146933555603] 
-
-Epoch number, train and test loss      :   2 [0.93476322639820186, 0.98894669115543365] 
-
-Epoch number, train and test accuracy  :   3 [0.67922849017520281, 0.65315577387809753] 
-
-Epoch number, train and test loss      :   3 [0.88300593093384139, 0.9618372768163681] 
-
-Epoch number, train and test accuracy  :   4 [0.68847407296646468, 0.66124576330184937] 
-
-Epoch number, train and test loss      :   4 [0.85722206082454944, 0.94357152283191681] 
-
-Epoch number, train and test accuracy  :   5 [0.69587380387062248, 0.66625986993312836] 
-
-Epoch number, train and test loss      :   5 [0.8361745795538259, 0.93108513951301575] 
-
-Epoch number, train and test accuracy  :   6 [0.70214599648187326, 0.66994293034076691] 
-
-Epoch number, train and test loss      :   6 [0.81964790682459987, 0.92710110545158386] 
-
-Epoch number, train and test accuracy  :   7 [0.70698864931284, 0.67332899570465088] 
-
-Epoch number, train and test loss      :   7 [0.80666431715322096, 0.9201638251543045] 
-
-Epoch number, train and test accuracy  :   8 [0.71080176913461024, 0.67556041479110718] 
-
-Epoch number, train and test loss      :   8 [0.79546027405317443, 0.91853898763656616] 
-
-Epoch number, train and test accuracy  :   9 [0.71464593050091763, 0.67738845944404602] 
-
-Epoch number, train and test loss      :   9 [0.78503492543863695, 0.91560801863670349] 
-
-Epoch number, train and test accuracy  :   10 [0.71856512995653377, 0.67771856486797333] 
-
-Epoch number, train and test loss      :   10 [0.77379920039066052, 0.91409364342689514] 
-
-Epoch number, train and test accuracy  :   11 [0.72206443686817967, 0.67760607600212097] 
-
-Epoch number, train and test loss      :   11 [0.76311000003371132, 0.91765448451042175] 
-
-Epoch number, train and test accuracy  :   12 [0.72546111151229509, 0.6773192435503006] 
-
-Epoch number, train and test loss      :   12 [0.75385302721067915, 0.92402918636798859] 
-
-Epoch number, train and test accuracy  :   13 [0.72785137559092317, 0.67671938240528107] 
-
-Epoch number, train and test loss      :   13 [0.74727936955385432, 0.92654059827327728] 
-
-Epoch number, train and test accuracy  :   14 [0.72911818498788883, 0.67556819319725037] 
-
-Epoch number, train and test loss      :   14 [0.74301106153532515, 0.93344558775424957] 
-
-Epoch number, train and test accuracy  :   15 [0.73080618852792789, 0.67412015795707703] 
-
-Epoch number, train and test loss      :   15 [0.73803031167318656, 0.93411117792129517] 
-
-Epoch number, train and test accuracy  :   16 [0.73314740075621498, 0.67605477571487427] 
-
-Epoch number, train and test loss      :   16 [0.73080060093901877, 0.93278783559799194] 
-
-Epoch number, train and test accuracy  :   17 [0.73490270209866904, 0.67353379726409912] 
-
-Epoch number, train and test loss      :   17 [0.72573378751444262, 0.93406373262405396] 
-
-Epoch number, train and test accuracy  :   18 [0.73692348668741625, 0.66718320548534393] 
-
-Epoch number, train and test loss      :   18 [0.71988960060962415, 0.95508584380149841] 
-
-Epoch number, train and test accuracy  :   19 [0.73764902076055838, 0.67250870168209076] 
-
-Epoch number, train and test loss      :   19 [0.71826035616009731, 0.94133757054805756] 
-
-Epoch number, train and test accuracy  :   20 [0.73847009414850284, 0.67315025627613068] 
-
-Epoch number, train and test loss      :   20 [0.71606266775796579, 0.94252243638038635] 
-
-
-
-"""
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    
 
 
 

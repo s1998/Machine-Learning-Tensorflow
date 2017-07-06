@@ -31,30 +31,29 @@ def get_data_train():
   
   with open(file_path, 'rb') as file_ip:
     data_train = pickle.load(file_ip)
-  
-  for batch_no in range(5534 // 128):
-    data = data_train[batch_no]
-    x_inp = data[0]
-    y_inp = data[1]
-    m_inp = data[2]
-    l_inp = data[3]
-    for i in range(128):
-      x_inp[i] = x_inp[i][50:750]
-      l_inp[i] = l_inp[i] - 100
-    data_train[batch_no] = [x_inp, y_inp, m_inp, l_inp]
+    for batch_no in range(5534 // 128):
+      data = data_train[batch_no]
+      x_inp = data[0]
+      y_inp = data[1]
+      m_inp = data[2]
+      l_inp = data[3]
+      for i in range(128):
+        x_inp[i] = x_inp[i][50:750]
+        l_inp[i] = l_inp[i] - 100
+      data_train[batch_no] = [x_inp, y_inp, m_inp, l_inp]
   
   with open(file_path_1, 'rb') as file_ip:
     data_test = pickle.load(file_ip)
     for batch_no in range(513 // 128):
-    data = data_test[batch_no]
-    x_inp = data[0]
-    y_inp = data[1]
-    m_inp = data[2]
-    l_inp = data[3]
-    for i in range(128):
-      x_inp[i] = x_inp[i][50:750]
-      l_inp[i] = l_inp[i] - 100
-    data_test[batch_no] = [x_inp, y_inp, m_inp, l_inp]
+      data = data_test[batch_no]
+      x_inp = data[0]
+      y_inp = data[1]
+      m_inp = data[2]
+      l_inp = data[3]
+      for i in range(128):
+        x_inp[i] = x_inp[i][50:750]
+        l_inp[i] = l_inp[i] - 100
+      data_test[batch_no] = [x_inp, y_inp, m_inp, l_inp]
   
   print("Data has been loaded in %d seconds" % (time.time()-p) )
   
@@ -438,7 +437,142 @@ if __name__=="__main__":
 
 
 
+"""
+30 epochs result : 
+Printing all previous results : 
 
+Epoch number, train and test accuracy  :   0 [0.40192174668921982, 0.50085108727216721] 
+
+Epoch number, train and test loss   :   0 [1.5646954636241115, 1.3526137471199036] 
+
+Epoch number, train and test accuracy  :   1 [0.5971223365428836, 0.59579932689666748] 
+
+Epoch number, train and test loss   :   1 [1.1170981096666912, 1.1136055290699005] 
+
+Epoch number, train and test accuracy  :   2 [0.65852396709974426, 0.64124743640422821] 
+
+Epoch number, train and test loss   :   2 [0.94734781980514526, 0.99087457358837128] 
+
+Epoch number, train and test accuracy  :   3 [0.67842829920524772, 0.65320315957069397] 
+
+Epoch number, train and test loss   :   3 [0.88932124958481895, 0.9538227915763855] 
+
+Epoch number, train and test accuracy  :   4 [0.68873844313067056, 0.6613345742225647] 
+
+Epoch number, train and test loss   :   4 [0.85872582086296967, 0.9306635856628418] 
+
+Epoch number, train and test accuracy  :   5 [0.69650272158689275, 0.66697099804878235] 
+
+Epoch number, train and test loss   :   5 [0.83720757240472843, 0.92070408165454865] 
+
+Epoch number, train and test accuracy  :   6 [0.70186805309251299, 0.66866198182106018] 
+
+Epoch number, train and test loss   :   6 [0.82201588985531826, 0.91396556794643402] 
+
+Epoch number, train and test accuracy  :   7 [0.70728343447973563, 0.67463469505310059] 
+
+Epoch number, train and test loss   :   7 [0.80612029862958334, 0.90190999209880829] 
+
+Epoch number, train and test accuracy  :   8 [0.71205125714457307, 0.67536252737045288] 
+
+Epoch number, train and test loss   :   8 [0.79308049900587219, 0.89886508882045746] 
+
+Epoch number, train and test accuracy  :   9 [0.71618189090906192, 0.67724154889583588] 
+
+Epoch number, train and test loss   :   9 [0.78133418116458631, 0.89594894647598267] 
+
+Epoch number, train and test accuracy  :   10 [0.72000429519387177, 0.67797993123531342] 
+
+Epoch number, train and test loss   :   10 [0.77005287658336552, 0.89268647134304047] 
+
+Epoch number, train and test accuracy  :   11 [0.7229656882064287, 0.67876899242401123] 
+
+Epoch number, train and test loss   :   11 [0.76148744239363564, 0.89028221368789673] 
+
+Epoch number, train and test accuracy  :   12 [0.72536982630574431, 0.67761126160621643] 
+
+Epoch number, train and test loss   :   12 [0.75443858739941616, 0.8979422003030777] 
+
+Epoch number, train and test accuracy  :   13 [0.727011428322903, 0.67645159363746643] 
+
+Epoch number, train and test loss   :   13 [0.75142643618029215, 0.90063650906085968] 
+
+Epoch number, train and test accuracy  :   14 [0.72843245018360225, 0.67658188939094543] 
+
+Epoch number, train and test loss   :   14 [0.74686561767445059, 0.90648679435253143] 
+
+Epoch number, train and test accuracy  :   15 [0.72983368468839072, 0.67700138688087463] 
+
+Epoch number, train and test loss   :   15 [0.74264241235200745, 0.90096674859523773] 
+
+Epoch number, train and test accuracy  :   16 [0.73308934999066733, 0.6749490350484848] 
+
+Epoch number, train and test loss   :   16 [0.73365093802296844, 0.9140002429485321] 
+
+Epoch number, train and test accuracy  :   17 [0.73709075256835588, 0.66972267627716064] 
+
+Epoch number, train and test loss   :   17 [0.7209656779156175, 0.93355034291744232] 
+
+Epoch number, train and test accuracy  :   18 [0.73847566926202113, 0.6771281510591507] 
+
+Epoch number, train and test loss   :   18 [0.71748205395632014, 0.91216346621513367] 
+
+Epoch number, train and test accuracy  :   19 [0.73945395475210141, 0.67361815273761749] 
+
+Epoch number, train and test loss   :   19 [0.71430550896844203, 0.93003575503826141] 
+
+Epoch number, train and test accuracy  :   20 [0.74266330447307849, 0.67486894130706787] 
+
+Epoch number, train and test loss   :   20 [0.70551165453223297, 0.92714795470237732] 
+
+Epoch number, train and test accuracy  :   21 [0.74675571364025739, 0.67512406408786774] 
+
+Epoch number, train and test loss   :   21 [0.69287745065467299, 0.93100258708000183] 
+
+Epoch number, train and test accuracy  :   22 [0.75036963889765185, 0.67014075815677643] 
+
+Epoch number, train and test loss   :   22 [0.68277494574702058, 0.94427978992462158] 
+
+Epoch number, train and test accuracy  :   23 [0.75168142207833222, 0.66888570785522461] 
+
+Epoch number, train and test loss   :   23 [0.67900106380152148, 0.95224013924598694] 
+
+Epoch number, train and test accuracy  :   24 [0.75157132675481397, 0.67081825435161591] 
+
+Epoch number, train and test loss   :   24 [0.67893594087556353, 0.95149087905883789] 
+
+Epoch number, train and test accuracy  :   25 [0.75228471950043074, 0.67060254514217377] 
+
+Epoch number, train and test loss   :   25 [0.6773986317390619, 0.95329980552196503] 
+
+Epoch number, train and test accuracy  :   26 [0.75404570962107453, 0.66680422425270081] 
+
+Epoch number, train and test loss   :   26 [0.67217817694641824, 0.95889033377170563] 
+
+Epoch number, train and test accuracy  :   27 [0.75461919224539464, 0.6667933315038681] 
+
+Epoch number, train and test loss   :   27 [0.66944558675899057, 0.97447948157787323] 
+
+Epoch number, train and test accuracy  :   28 [0.75517494872558943, 0.66789588332176208] 
+
+Epoch number, train and test loss   :   28 [0.66835658494816275, 0.97900000214576721] 
+
+Epoch number, train and test accuracy  :   29 [0.75693622578022091, 0.66630688309669495] 
+
+Epoch number, train and test loss   :   29 [0.66274895778922149, 0.97812607884407043] 
+
+Epoch number, train and test accuracy  :   30 [0.76126013938770742, 0.66668182611465454] 
+
+Epoch number, train and test loss   :   30 [0.65041299892026327, 0.98845253884792328] 
+
+Epoch number, train and test accuracy  :   31 [0.7624738133230875, 0.66202078759670258] 
+
+Epoch number, train and test loss   :   31 [0.64520455377046448, 1.0220697224140167] 
+
+
+
+
+"""
 
 
 
