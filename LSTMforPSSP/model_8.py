@@ -58,14 +58,16 @@ class BrnnForPsspModelOne:
     # define weights and biases here (8 weights + 1 biases)
     self.weight_f_c = tf.Variable(0.01 * tf.random_uniform(shape=[hidden_units, num_classes], maxval=1, dtype=tf.float32), dtype=tf.float32) 
     self.weight_b_c = tf.Variable(0.01 * tf.random_uniform(shape=[hidden_units, num_classes], maxval=1, dtype=tf.float32), dtype=tf.float32) 
-    self.weight_gate_1 = tf.Variable(tf.random_uniform(shape=[hidden_units * 2 + 122, hidden_units * 2], maxval=1, dtype=tf.float32) / tf.sqrt(self.hidden_units * 2 + 122), dtype=tf.float32) 
-    self.weight_gate_2 = tf.Variable(tf.random_uniform(shape=[hidden_units * 2 + 122, 122], maxval=1, dtype=tf.float32) / tf.sqrt(self.hidden_units * 2 + 122), dtype=tf.float32) 
-    self.weight_h = tf.Variable(0.01 * tf.random_uniform(shape=[hidden_units * 2 + 122, hidden_units * 2 + 122], maxval=1, dtype=tf.float32) / tf.sqrt((self.hidden_units * 2 + 122) / 2), dtype=tf.float32) 
-    self.weight_y = tf.Variable(0.01 * tf.random_uniform(shape=[hidden_units * 2 + 122, num_classes], maxval=1, dtype=tf.float32) / tf.sqrt(self.hidden_units * 2 + 122), dtype=tf.float32) 
-    self.biases_h = tf.Variable(tf.zeros([hidden_units * 2 + 122], dtype=tf.float32), dtype=tf.float32)
+    self.weight_gate_1 = tf.Variable(tf.random_uniform(shape=[hidden_units * 4 + 122, hidden_units * 2], maxval=1, dtype=tf.float32) / tf.sqrt(self.hidden_units * 4 + 122), dtype=tf.float32) 
+    self.weight_gate_2 = tf.Variable(tf.random_uniform(shape=[hidden_units * 4 + 122, 122], maxval=1, dtype=tf.float32) / tf.sqrt(self.hidden_units * 4 + 122), dtype=tf.float32) 
+    self.weight_gate_3 = tf.Variable(tf.random_uniform(shape=[hidden_units * 4 + 122, hidden_units * 2], maxval=1, dtype=tf.float32) / tf.sqrt(self.hidden_units * 4 + 122), dtype=tf.float32) 
+    self.weight_h = tf.Variable(0.01 * tf.random_uniform(shape=[hidden_units * 4 + 122, hidden_units * 4 + 122], maxval=1, dtype=tf.float32) / tf.sqrt((self.hidden_units * 4 + 122) / 2), dtype=tf.float32) 
+    self.weight_y = tf.Variable(0.01 * tf.random_uniform(shape=[hidden_units * 4 + 122, num_classes], maxval=1, dtype=tf.float32) / tf.sqrt(self.hidden_units * 4 + 122), dtype=tf.float32) 
+    self.biases_h = tf.Variable(tf.zeros([hidden_units * 4 + 122], dtype=tf.float32), dtype=tf.float32)
     self.biases_y = tf.Variable(tf.zeros([num_classes], dtype=tf.float32), dtype=tf.float32)
     self.biases_gate_1 = tf.Variable(tf.zeros([hidden_units * 2], dtype=tf.float32), dtype=tf.float32)
     self.biases_gate_2 = tf.Variable(tf.zeros([122], dtype=tf.float32), dtype=tf.float32)
+    self.biases_gate_3 = tf.Variable(tf.zeros([hidden_units * 2], dtype=tf.float32), dtype=tf.float32)
     
     self.rnn_cell_f = rnn.GRUCell(num_units = hidden_units, 
                                   activation = tf.tanh)
@@ -83,22 +85,35 @@ class BrnnForPsspModelOne:
 
     self.outputs_f_c = tf.slice(self.outputs_f, [0, 50, 0], [ batch_size, 700, 100])
     self.outputs_b_c = tf.slice(self.outputs_b, [0, 50, 0], [ batch_size, 700, 100])
+    self.outputs_f_p = tf.concat(
+                        [ tf.reduce_max(self.outputs_f, axis = 1) ] * 700, axis = 1)
+    self.outputs_b_p = tf.concat(
+                        [ tf.reduce_max(self.outputs_b, axis = 1) ] * 700, axis = 1)
 
     self.outputs_f_c_r = tf.reshape(self.outputs_f_c, [-1, 100])
     self.outputs_b_c_r = tf.reshape(self.outputs_b_c, [-1, 100])
+    self.outputs_f_p_r = tf.reshape(self.outputs_b_c, [-1, 100])
+    self.outputs_b_p_r = tf.reshape(self.outputs_b_c, [-1, 100])
     
-    list_of_tensors = [self.outputs_f_c_r, self.outputs_b_c_r ]
+    list_of_tensors = [self.outputs_f_c_r, self.outputs_b_c_r, self.outputs_f_p_r, self.outputs_b_p_r ]
+    list_of_tensors_1 = [self.outputs_f_c_r, self.outputs_b_c_r ]
+    list_of_tensors_2 = [self.outputs_f_p_r, self.outputs_b_p_r ]
 
     self.input_x_r = tf.reshape(self.input_x[:, 50:750, :], [-1, 122])
     self.outputs_rnn_concat = tf.concat(list_of_tensors, axis = 1)
+    self.outputs_rnn_c_concat = tf.concat(list_of_tensors_1, axis = 1)
+    self.outputs_rnn_p_concat = tf.concat(list_of_tensors_2, axis = 1)
     self.op_rnn_and_inp_concat = tf.concat([self.input_x_r, self.outputs_rnn_concat], axis = 1)
 
     self.output_gate_1 = tf.sigmoid(tf.matmul(self.op_rnn_and_inp_concat, self.weight_gate_1) + self.biases_gate_1)
     self.output_gate_2 = tf.sigmoid(tf.matmul(self.op_rnn_and_inp_concat, self.weight_gate_2) + self.biases_gate_2)
-    self.outputs_rnn_concat_gated = tf.multiply(self.output_gate_1, self.outputs_rnn_concat)
+    self.output_gate_3 = tf.sigmoid(tf.matmul(self.op_rnn_and_inp_concat, self.weight_gate_3) + self.biases_gate_3)
+    
+    self.outputs_rnn_c_concat_gated = tf.multiply(self.output_gate_1, self.outputs_rnn_c_concat)
     self.input_x_r_gated = tf.multiply(self.output_gate_2, self.input_x_r)
+    self.outputs_rnn_p_concat_gated = tf.multiply(self.output_gate_3, self.outputs_rnn_p_concat)
 
-    self.op_rnn_and_inp_concat_gated = tf.concat([self.input_x_r_gated, self.outputs_rnn_concat_gated], axis = 1)
+    self.op_rnn_and_inp_concat_gated = tf.concat([self.input_x_r_gated, self.outputs_rnn_c_concat_gated, self.outputs_rnn_p_concat_gated], axis = 1)
     self.h_predicted = tf.nn.relu(tf.matmul(self.op_rnn_and_inp_concat_gated, self.weight_h) + self.biases_h) 
     self.y_predicted = (tf.matmul(self.h_predicted, self.weight_y) + self.biases_y) 
 
